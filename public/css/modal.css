@@ -1,0 +1,76 @@
+.box {
+  background: #ffffff;
+  width: 300px;
+  margin: 20px auto;
+  margin-bottom: 0;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+}
+.form-modal {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: #f4f6f8;
+}
+
+#add {
+  width: 100%;
+  padding: 10px;
+  background: #35895f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+#close-modal-professor,
+#close-modal-classroom,
+#close-modal-student {
+  width: 100%;
+  padding: 10px;
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+#add:hover {
+  background: #44b37b;
+  transition: 0.9s;
+}
+
+
+#close-modal-professor:hover,
+#close-modal-classroom:hover,
+#close-modal-student:hover {
+  background: #af1717;
+  transition: 0.9s;
+}
+
+
+.messError {
+  background-color: rgba(255, 0, 0, 0.699);
+  color: #0a0a0ad0;
+  padding: 10px;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bolder;
+}

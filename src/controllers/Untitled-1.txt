@@ -1,0 +1,7 @@
+"Veuillez saisir un nom d'établissement valide (2 à 40 caractères)."
+"Veuillez saisir un numéro SIRET valide (14 chiffres, sans espaces ni lettres)",
+"Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).",
+"Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).",
+"Veuillez saisir une adresse e-mail valide",
+ "Le mot de passe doit contenir au mininum 8 caractères, au moins un chiffre et au moins une lettre majuscule.",
+ "Identifiants invalide",

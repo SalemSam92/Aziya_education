@@ -1,0 +1,55 @@
+{% extends "../layouts/base.twig" %}
+
+{% block style %}
+	<link rel="stylesheet" href="css/headerRegisterLogin.css">
+	<link rel="stylesheet" href="css/register.css">
+	<link rel="stylesheet" href="css/footer.css">
+{% endblock %}
+
+{% block header %}
+	{% include "../partials/headerRegisterLogin.twig" %}
+{% endblock %}
+
+{% block main %}
+
+	<div class="box">
+		<h2>Inscription</h2>
+
+		<form action="" method="POST">
+
+			<label for="schoolName">Nom de l'école</label>
+			<input type="text" id="schoolName" name="schoolName" placeholder="Nom de l'école" autofocus >
+
+			<label for="siret">SIRET</label>
+			<input type="text" id="siret" name="siret" placeholder="1234567891011121314">
+
+			<label for="lastname">Nom du directeur</label>
+			<input type="text" id="lastname" name="lastname" placeholder="Dupont">
+
+			<label for="firstname">Prénom du directeur</label>
+			<input type="text" id="firstname" name="firstname" placeholder="Jean">
+
+			<label for="mail">E-mail</label>
+			<input type="mail" id="mail" name="mail" placeholder="dupont@gmail.com">
+
+			<label for="password">Mot de passe</label>
+			<input type="password" id="password" name="password" placeholder="********">
+
+			<button type="submit">S'inscrire</button>
+
+			<p class="login">Déjà inscrit?
+				<a href="/login">Se connecter ici</a>
+			</p>
+		</form>
+
+
+		{% if error %}
+			<div class="messError">
+				{{error}}
+			</div>
+		{% endif %}
+
+
+	</div>
+	
+{% endblock %}

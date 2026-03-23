@@ -1,0 +1,52 @@
+header {
+  background: #ffffff;
+  padding: 16px 32px;
+  border-bottom: 0px solid #d5d8dc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand {
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.name {
+  color: #35895f;
+}
+.title {
+  font-weight: bold;
+  color: #1f2933;
+}
+
+nav a {
+  margin-left: 16px;
+  text-decoration: none;
+  font-size: 15px;
+}
+.btn-register,
+.btn-login {
+  padding: 8px 20px;
+  border-radius: 15px;
+  transition: 0.2s;
+  font-size: 12px;
+}
+.btn-register {
+  background: linear-gradient(to bottom, #4ea479 0%, #3f8c68 50%, #2a5642 100%);
+  color: white;
+}
+
+.btn-register:hover {
+  background: #2a5642;
+}
+
+.btn-login {
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+}
+
+.btn-login:hover {
+  background: #3f8c68;
+  color: white;
+}

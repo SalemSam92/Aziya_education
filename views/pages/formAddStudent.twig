@@ -1,0 +1,39 @@
+{% block style %}
+	<link rel="stylesheet" href="css/modal.css">
+{% endblock %}
+
+{% block main %}
+
+	<div class="box">
+
+		<h2>Ajouter un élève</h2>
+
+		<form class="form-modal" action="/dashboardDirector/{{user.school_id}}/createStudent" method="POST">
+
+	
+			<label for="lastname">Nom</label>
+			<input type="text" id="lastname" name="lastname" placeholder="Dupont" autofocus>
+
+			<label for="firstname">Prénom</label>
+			<input type="text" id="firstname" name="firstname" placeholder="Jean">
+
+			<label for="birthday">Date de naissance</label>
+			<input type="date" id="birthday" name="birthday" placeholder="01/01/2020">
+
+
+			<button type="submit" id="add">Ajouter</button>
+		</form>
+		<button type="submit" id="close-modal-student">Fermer</button>
+
+		{% if error %}
+			<div class="messError">
+				{{error}}
+			</div> 
+		{% endif %}
+
+
+	</div>
+
+{% endblock %}
+
+{% block footer %}{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "../layouts/base.twig" %}
+
+{% block style %}
+<link rel="stylesheet" href="css/headerLandingPage.css">
+<link rel="stylesheet" href="css/landingPage.css">
+<link rel="stylesheet" href="css/footer.css">
+{% endblock %}
+
+{% block header %}
+{% include "../partials/headerLandingPage.twig" %}
+{% endblock %}
+
+
+{% block main %}
+<main>
+      <section class="landing-section">
+        <h1>La gestion scolaire simplifiée</h1>
+        <p>
+          AziyaEducation est une plateforme moderne dédiée aux écoles primaires
+          privées. Elle permet aux directeurs de gérer leurs classes, leurs
+          enseignants et leurs élèves dans une interface claire, rapide et
+          intuitive.
+        </p>
+      </section>
+
+      <section class="features">
+        <h2>Ce que permet AziyaEducation</h2>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Gestion des classes</h3>
+            <p>
+              Créer, modifier et organiser les classes de l'établissement en
+              quelques clics.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Gestion des professeurs</h3>
+            <p>Ajouter des enseignants et leur attribuer une classe dédiée.</p>
+          </div>
+
+          <div class="card">
+            <h3>Gestion des élèves</h3>
+            <p>
+              Enregistrer les élèves et les affecter facilement à leur classe.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+{% endblock %}

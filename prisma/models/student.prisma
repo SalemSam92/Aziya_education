@@ -1,0 +1,17 @@
+model Student {
+    id        Int      @id @default(autoincrement())
+    lastname  String   @db.VarChar(45)
+    firstname String   @db.VarChar(40)
+    birthday  DateTime
+
+    classroom_id Int
+    classroom    Classroom? @relation(fields: [classroom_id], references: [id])
+    
+    school_id Int
+    school School @relation(fields: [school_id],references: [id])
+    
+    imputations Imputation[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

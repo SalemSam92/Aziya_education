@@ -1,0 +1,11 @@
+model School {
+    id         Int         @id @default(autoincrement())
+    siret      String      @unique @db.VarChar(14)
+    name       String      @db.VarChar(40)
+    users      User[]
+    classrooms Classroom[]
+    students Student[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

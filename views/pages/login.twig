@@ -1,0 +1,42 @@
+{% extends "../layouts/base.twig" %}
+
+
+{% block style %}
+	<link rel="stylesheet" href="css/headerRegisterLogin.css">
+	<link rel="stylesheet" href="css/login.css">
+	<link rel="stylesheet" href="css/footer.css">
+{% endblock %}
+
+{% block header %}
+	{% include "../partials/headerRegisterLogin.twig" %}
+{% endblock %}
+
+{% block main %}
+
+
+	<div class="box">
+		<h2>Connexion</h2>
+
+		<form action="" method="POST">
+			<label for="mail">E-mail</label>
+			<input type="mail" id="mail" name="mail" placeholder="dupont@gmail.com" autofocus>
+
+			<label for="password">Mot de passe</label>
+			<input type="password" id="password" name="password" placeholder="********">
+
+			<button type="submit">Se connecter</button>
+
+			<p class="register">Pas encore inscrit?
+				<a href="/register">S'inscrire ici</a><br>
+				<a href="/register">Mot de passe oublié?</a>
+			</p>
+			
+		</form>
+		{% if errorLogin %}
+			<div class="messError">
+				{{errorLogin}}
+			</div>
+		{% endif %}
+		
+	</div>
+{% endblock %}

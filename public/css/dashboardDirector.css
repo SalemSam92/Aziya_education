@@ -1,0 +1,202 @@
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+  /* font-family: "Poppins", sans-serif; */
+  background: #f4f6f8;
+  color: #333;
+  font-size: 15px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  margin: 20px 20px;
+  gap: 40px;
+  height: 600px;
+}
+
+.sideBar {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.nameUser {
+  color: #181717;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.nameSchool {
+  color: #181717;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+  margin-right: 80px;
+}
+.cars p {
+  color: #35895f;
+  font-size: 14px;
+}
+.box-btn {
+  display: flex;
+  justify-content: space-around;
+  margin-right: 80px;
+  padding: 10px;
+}
+.cars {
+  background-color: white;
+  padding: 10px;
+  border-radius: 6px;
+  width: 15%;
+  font-size: 12px;
+  text-align: center;
+}
+#btn-add-professor,
+#btn-add-classroom,
+#btn-add-student {
+  width: 15%;
+  padding: 10px;
+  background: #35895f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: center;
+}
+
+#btn-add-professor:hover,
+#btn-add-classroom:hover,
+#btn-add-student:hover {
+  background: #44b37b;
+  transition: 0.9s;
+}
+a {
+  color: #35895f;
+  text-decoration: none;
+  font-weight: bold;
+}
+a:hover {
+  color: #35895f;
+  text-decoration: underline;
+  transition: 0.9s;
+}
+.affect-section {
+  margin-top: 10px;
+  margin-right: 80px;
+  margin-left: 90px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 6px;
+  width: 85%;
+  text-align: left;
+}
+.classroom-professor {
+  font-size: 12px;
+  text-align: left;
+  margin: 15px;
+  display: flex;
+}
+.form {
+  display: flex;
+  justify-content: space-between;
+  gap: 300px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+label {
+  font-size: 12px;
+}
+#btn-affect-professor,
+#btn-affect-classroom {
+  width: 50%;
+  padding: 10px;
+  background: #35895f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 20px;
+}
+#btn-affect:hover {
+  background: #44b37b;
+  transition: 0.9s;
+}
+.link-affect {
+  margin: 20px;
+}
+.link-affect a {
+  margin-left: 90px;
+  width: 50%;
+  padding: 10px;
+  background: #35895f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: center;
+}
+.link-affect a:hover {
+  background: #44b37b;
+  transition: 0.9s;
+  text-decoration: none;
+}
+
+.modal-professor {
+  position: fixed;
+  inset: 0; /* Equivalent de top, left */
+  background-color: rgb(0, 0, 0, 0.6);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.modal-classroom {
+  position: fixed;
+  inset: 0; /* Equivalent de top, left */
+  background-color: rgb(0, 0, 0, 0.6);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.modal-student {
+  position: fixed;
+  inset: 0; /* Equivalent de top, left */
+  background-color: rgb(0, 0, 0, 0.6);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container {
+  background-color: white;
+  text-align: center;
+  border-radius: 8px;
+}

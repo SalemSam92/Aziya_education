@@ -1,0 +1,27 @@
+header {
+  /* background: #ffffff; */
+  padding: 12px 32px;
+  border-bottom: 0px solid #d5d8dc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand {
+  font-size: 28px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.name {
+  color: #35895f;
+}
+.title {
+  font-weight: bold;
+  color: #1f2933;
+}
+
+@media screen and (max-width: 420px) {
+  .brand {
+    font-size: 22px;
+  }
+}

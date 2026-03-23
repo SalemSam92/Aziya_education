@@ -1,0 +1,16 @@
+model Classroom {
+    id           Int    @id @default(autoincrement())
+    name         String  @db.VarChar(10)
+    nbMaxStudent Int
+
+    school_id Int
+    school    School @relation(fields: [school_id], references: [id])
+
+    professor_id Int?  
+    user         User? @relation("ProfessorClassroom", fields: [professor_id], references: [id])
+
+    student   Student[]
+    
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+}
