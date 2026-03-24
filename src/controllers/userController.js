@@ -216,7 +216,8 @@ export async function getDashboardDirector(req, res) {
     const studentsWithClassroom = await studentAddClassroom(req.session.user.school_id);
     const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id)
     // const professorWithClassroom = await classroomWithProfessor(req.session.user.school_id,);
-
+    console.log(req.session.user);
+    
     //faire sessionError et sessionSuccès
 
     res.render("pages/dashboardDirector.twig", {
