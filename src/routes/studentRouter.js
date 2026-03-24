@@ -5,7 +5,7 @@ export const studentRouter = express.Router()
 
 
 studentRouter.post("/dashboardDirector/:school_id/createStudent",postCreateStudent)
-studentRouter.post("/dashboardDirector",affectClassroomToStudent)
+studentRouter.post("/dashboardDirector/affect",affectClassroomToStudent)
 
 // studentRouter.get()
 // studentRouter.post()

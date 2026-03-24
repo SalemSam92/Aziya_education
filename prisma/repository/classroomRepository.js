@@ -38,12 +38,18 @@ export async function nbClassroom(school_id){
 }
 export async function nbClassroomByProfessor(professor_id){
     //    console.log("nbClassroomByProfessor called with:", professor_id);
-
-
     return await prisma.classroom.count({
         where :{
             professor_id : professor_id,
         }
+    })
+}
+
+export async function nbStudentMaxByClassroom(school_id){
+    return await prisma.classroom.findMany({
+        where : {school_id : school_id},
+       include : {student : true}, // equivant du classroom.student.length dans la page twig
+        orderBy : {name : "asc"}
     })
 }
 

@@ -17,11 +17,13 @@ import {
 import {
   classroomWithProfessor,
   nbClassroom,
+  nbStudentMaxByClassroom,
   selectClassroom,
 } from "../../prisma/repository/classroomRepository.js";
 import {
   nbStudent,
   selectStudent,
+  studentAddClassroom,
 } from "../../prisma/repository/studentRepository.js";
 
 export async function getLandingPage(req, res) {
@@ -205,28 +207,28 @@ export async function postCreateProfessor(req, res) {
 
 export async function getDashboardDirector(req, res) {
   try {
-    const professors = await selectProfessor(req.session.user.school_id);
-    const classrooms = await selectClassroom(req.session.user.school_id);
-    const students = await selectStudent(req.session.user.school_id);
     const totalProfessor = await nbProfessor(req.session.user.school_id);
     const totalStudent = await nbStudent(req.session.user.school_id);
     const totalClassroom = await nbClassroom(req.session.user.school_id);
-    const professorWithClassroom = await classroomWithProfessor(req.session.user.school_id)
-    //faire sessionError et sessionSuccès
-  
 
-   
+    const professors = await selectProfessor(req.session.user.school_id);
+    const classrooms = await selectClassroom(req.session.user.school_id);
+    const studentsWithClassroom = await studentAddClassroom(req.session.user.school_id);
+    const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id)
+    // const professorWithClassroom = await classroomWithProfessor(req.session.user.school_id,);
+
+    //faire sessionError et sessionSuccès
 
     res.render("pages/dashboardDirector.twig", {
       title: "Tableau de bord",
-      user: req.session.user, 
+      user: req.session.user,
       professors,
       classrooms,
-      students,
       totalProfessor,
       totalStudent,
       totalClassroom,
-      professorWithClassroom
+      studentsWithClassroom,
+      capaciteMaxClassroom
     });
   } catch (error) {
     console.log(error);

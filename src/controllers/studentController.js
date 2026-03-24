@@ -55,16 +55,16 @@ export async function affectClassroomToStudent(req,res){
   console.log(req.body);
   
   try {
-    const studentHasClassroom = await nbClassroomForStudent(Number(student_id)) //Récuperation de l'id de l'élève avec sa classe (classroom_id)
+    // const studentHasClassroom = await nbClassroomForStudent(Number(student_id)) //Récuperation de l'id de l'élève avec sa classe (classroom_id)
     
     
-    if (studentHasClassroom  && !confirm_Student) {     //Vérification si l’élève a déjà une classe et que l'utilisateur n'a pas confirmé
-      return res.render("pages/dashboardDirector.twig",{
-        confirmAffectStudent : true,
-        student_id,
-        classroom_id
-      })
-    }
+    // if (studentHasClassroom  && !confirm_Student) {     //Vérification si l’élève a déjà une classe et que l'utilisateur n'a pas confirmé
+    //   return res.render("pages/dashboardDirector.twig",{
+    //     confirmAffectStudent : true,
+    //     student_id,
+    //     classroom_id
+    //   })
+    // }
 
     await affectClassroom(Number(student_id),Number(classroom_id))
     res.redirect("/dashboardDirector");

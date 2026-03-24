@@ -50,10 +50,22 @@ export async function affectClassroom(id, classroom_id) {
   });
 }
 
+export async function studentAddClassroom(school_id) {
+  return await prisma.student.findMany({
+    where: { school_id: school_id },
+    include: {
+      classroom : true
+    },
+    orderBy: {
+      lastname: "asc",
+    },
+  });
+}
+
 export async function nbClassroomForStudent(id) {
   return await prisma.student.findUnique({
     select: {
-      classroom_id: true
+      classroom_id: true,
     },
     where: {
       id: id,
