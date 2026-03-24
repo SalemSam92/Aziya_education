@@ -36,7 +36,7 @@ export async function postCreateStudent(req, res) {
     });
   }
   try {
-
+ 
     await createStudent(lastname, firstname,new Date(birthday), Number(school_id));
     res.redirect("/dashboardDirector");
   } catch (error) {
