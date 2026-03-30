@@ -19,6 +19,9 @@ header {
   font-weight: bold;
   color: #1f2933;
 }
+a:hover{
+  text-decoration: none;
+}
 
 @media screen and (max-width: 420px) {
   .brand {

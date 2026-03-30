@@ -24,16 +24,11 @@
 			<p class="nameSchool">Etablissement:
 				{{user.school.name}}
 			</p>
-
-
 			<p>
-				<a href="#">Tableau de bord</a>
+				<a href="/professor">Professeurs</a>
 			</p>
 			<p>
-				<a href="#">Professeurs</a>
-			</p>
-			<p>
-				<a href="#">Classes</a>
+				<a href="/classroom">Classes</a>
 			</p>
 			<p>
 				<a href="#">Elèves</a>
@@ -84,6 +79,14 @@
 					{% include "../pages/formAddStudent.twig" %}
 				</div>
 			</div>
+				<div class="modal-confirm" >
+
+					{% if confirmAffectation %}
+						<div class="modal-container">
+							{% include "../pages/modalConfirmAffectProf.twig" %}
+						</div>
+					{% endif %}
+				</div>
 
 
 			<div class="affect-section">
@@ -105,7 +108,8 @@
 
 							<button type="submit" id="btn-affect-professor">Affecter</button>
 
-
+							
+							
 						</div>
 
 
@@ -122,20 +126,10 @@
 				</form>
 
 
-				<div class="modal-confirm" id="modal-confirm-affect">
-
-					{% if confirmAffectation %}
-						<div class="modal-container">
-							{% include "../pages/formConfirmAffectProf.twig" %}
-						</div>
-						{# {% elseif 	confirmAffectStudent %}
-																											{% include "../pages/formAffectClassroomToStudent.twig" %} #}
-					{% endif %}
-
-
-				</div>
+			
 			</div>
 		</div>
+		
 
 		<div class="affect-section">
 

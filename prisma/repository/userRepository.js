@@ -63,6 +63,7 @@ export async function selectProfessor(school_id){
       id : true,
       lastname :true,
       firstname : true,
+      mail : true,
       role : true,
 
     },where :{

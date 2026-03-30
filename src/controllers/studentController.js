@@ -50,7 +50,7 @@ export async function postCreateStudent(req, res) {
 
 export async function affectClassroomToStudent(req,res){
   const {student_id,classroom_id} = req.body
-  const confirm_Student = req.body.confirm === "true"
+  // const confirm_Student = req.body.confirm === "true"
   
   console.log(req.body);
   

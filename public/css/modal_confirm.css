@@ -8,27 +8,18 @@
   border-radius: 8px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
-h2 {
+p {
   margin-top: 0;
-  margin-bottom: 15px;
   text-align: center;
+  font-weight: 700;
 }
 .form-modal {
   display: flex;
   flex-direction: column;
   text-align: left;
 }
-input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 12px;
-  background-color: #f4f6f8;
-}
 
-#add {
+.confirm {
   width: 100%;
   padding: 10px;
   background: #35895f;
@@ -39,7 +30,7 @@ input {
   font-size: 15px;
   margin-bottom: 10px;
 }
-#close-modal {
+.exit {
   width: 100%;
   padding: 10px;
   background: #c62828;
@@ -49,20 +40,12 @@ input {
   cursor: pointer;
   font-size: 15px;
 }
-.messError {
-  background-color: rgba(255, 0, 0, 0.699);
-  color: #0a0a0ad0;
-  padding: 10px;
-  border-radius: 7px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: bolder;
-}
+
 .modal-confirm{
   position: fixed;
   inset: 0;     /* Equivalent de top, left */            
   background-color: rgb(0, 0, 0,0.6);
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;

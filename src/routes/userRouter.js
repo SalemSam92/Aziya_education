@@ -1,5 +1,5 @@
 import express from "express"
-import { getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getRegisterDirector, postCreateProfessor, postLogin, postRegisterDirector } from "../controllers/userController.js"
+import { getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, postCreateProfessor, postLogin, postRegisterDirector } from "../controllers/userController.js"
 import { getRoleLogin } from "../services/RoleAurthguard.js"
 import { authguard } from "../services/authguardUser.js"
 import { verifieRoleDirector } from "../services/directorOnly.js"
@@ -24,6 +24,7 @@ userRouter.post("/login",postLogin,getRoleLogin)
 //Gestion Accès tableau de bord (Directeur)
 userRouter.get("/dashboardDirector",authguard,verifieRoleDirector, getDashboardDirector)
 userRouter.post("/dashboardDirector/:school_id/createProfessor",postCreateProfessor)
+userRouter.get("/professor",authguard,verifieRoleDirector,getManagementProfessor)
 
 
 //Gestion Accès tableau de bord (Professeur)

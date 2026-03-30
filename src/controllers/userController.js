@@ -213,11 +213,10 @@ export async function getDashboardDirector(req, res) {
 
     const professors = await selectProfessor(req.session.user.school_id);
     const classrooms = await selectClassroom(req.session.user.school_id);
-    const studentsWithClassroom = await studentAddClassroom(req.session.user.school_id);
-    const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id)
+    const studentsWithClassroom = await studentAddClassroom(req.session.user.school_id,);
+    const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id);
     // const professorWithClassroom = await classroomWithProfessor(req.session.user.school_id,);
-    console.log(req.session.user);
-    
+
     //faire sessionError et sessionSuccès
 
     res.render("pages/dashboardDirector.twig", {
@@ -229,7 +228,7 @@ export async function getDashboardDirector(req, res) {
       totalStudent,
       totalClassroom,
       studentsWithClassroom,
-      capaciteMaxClassroom
+      capaciteMaxClassroom,
     });
   } catch (error) {
     console.log(error);
@@ -237,6 +236,20 @@ export async function getDashboardDirector(req, res) {
       title: "Tableau de bord",
       error,
     });
+  }
+}
+
+export async function getManagementProfessor(req, res) {
+  const professors = await selectProfessor(req.session.user.school_id)
+  try {
+    res.render("pages/professor.twig", {
+      title: "Gestion professeurs",
+      user: req.session.user,
+      professors
+      
+    });
+  } catch (error) {
+    console.log(error);
   }
 }
 

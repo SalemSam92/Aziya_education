@@ -1,4 +1,5 @@
 {% extends "../layouts/base.twig" %}
+{% extends "../layouts/base.twig" %}
 
 {% block style %}
 	<link rel="stylesheet" href="css/headerDashboard.css">
@@ -31,18 +32,19 @@
 				<a href="/dashboardDirector">Tableau de bord</a>
 			</p>
 			<p>
-				<a href="/classroom">Classes</a>
+				<a href="/professor">Professeurs</a>
 			</p>
 			<p>
-				<a href="#">Elèves</a>
+				<a href="/student">Elèves</a>
 			</p>
 		</div>
 
 
             <div class="center">
-           {% for professor in professors %}
-             <p> {{professor.lastname}} {{professor.firstname}} {{professor.mail}} </p>
+           {% for classroom in classrooms %}
+             <p> {{classroom.name}} {{classroom.nbMaxStudent}} </p>
            {% endfor %}
+           <p>{{countStudent}} </p>
             </div>
 
 	{% endblock %}

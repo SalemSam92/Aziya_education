@@ -20,6 +20,7 @@ export async function selectClassroom(school_id){
         select :{
             id :true,
             name : true,
+            nbMaxStudent : true
             
         },
         where :{
@@ -76,5 +77,12 @@ export async function classroomWithProfessor(school_id){
         
       
     })
+}
+
+export async function countStudent(school_id){
+    return await prisma.classroom.count({
+        where : {school_id : school_id},
+    })
+    
 }
 

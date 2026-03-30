@@ -1,22 +1,22 @@
-
+{% extends "../layouts/base.twig" %}
 {% block style %}
-	<link rel="stylesheet" href="css/modal.css">
+	<link rel="stylesheet" href="css/modal_confirm.css">
 {% endblock %}
 
 {% block main %}
 	<div class="box">
 		<div class="form-modal">
-			<p>Ce professeur est déjà affecté à une classe. Voulez-vous continuer ?</p>
+			<p>Ce professeur est déjà affecté à une classe.</p><p>Voulez-vous continuer ?</p> 
 
 			<form method="POST" action="/dashboardDirector">
 				<input type="hidden" name="professor" value="{{professor}}">
 				<input type="hidden" name="classroom" value="{{classroom}}">
 				<input type="hidden" name="confirm" value="true">
-				<button type="submit">Confirmer</button>
+				<button class = "confirm" type="submit">Confirmer</button>
 			</form>
 		
 		<form method="GET" action="/dashboardDirector">
-				<button type="submit">Annuler</button>
+				<button class = "exit"  type="submit">Annuler</button>
 			</form>
 
 		</div>

@@ -5,12 +5,12 @@ import {
 } from "../services/regexDirector.js";
 import {
   affectProfessor,
+  countStudent,
   createClassroom,
+  nbClassroom,
   nbClassroomByProfessor,
   selectClassroom,
 } from "../../prisma/repository/classroomRepository.js";
-import { selectProfessor } from "../../prisma/repository/userRepository.js";
-import { selectStudent } from "../../prisma/repository/studentRepository.js";
 
 export async function postCreateClassroom(req, res) {
   const { name, nbMaxStudent } = req.body;
@@ -74,5 +74,22 @@ export async function affectProfessorToClassroom(req, res) {
       tile: "Tableau de bord",
       error,
     });
+  }
+}
+
+export async function getManagementClassroom(req,res){
+  const classrooms = await selectClassroom(req.session.user.school_id)
+  const countStudent = await countStudent(req.session.user.school_id)
+  try {
+      res.render("pages/classroom.twig", {
+      title: "Gestion des classes",
+      user: req.session.user,
+      classrooms,
+    countStudent
+      
+    });
+    
+  } catch (error) {
+     console.log(error);
   }
 }
