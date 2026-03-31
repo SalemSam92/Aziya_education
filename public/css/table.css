@@ -1,0 +1,68 @@
+.table-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.table-container h2 {
+  font-size: 24px;
+  color: #35895f;
+  margin-bottom: 20px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse; /*pour fusionner les bordures du tableau*/
+  font-size: 15px;
+  text-align: center;
+}
+.table thead {
+  background: #35895f;
+  color: white;
+}
+.table td {
+  border-bottom: 1px solid #e2e0db80;
+  padding: 10px;
+}
+.table td:hover {
+  background-color: #e2e0db80;
+  transition: 0.9s;
+}
+#btn {
+  background-color: #35895f;
+  border: 2px solid #35895f;
+}
+button {
+  border: 2px solid #c69428;
+  background-color: #c69428;
+  color: white;
+  border-radius: 6px;
+  transition: 0.2s;
+  padding: 8px;
+}
+button:hover {
+  background: #896519;
+  color: white;
+  transition: 0.9s;
+  border: 2px solid #896519;
+  cursor: pointer;
+}
+.btn-validate {
+  background-color: #35895f;
+  border: 2px solid #35895f;
+}
+
+.btn-delete {
+  border: 2px solid #c62828;
+  background-color: #c62828;
+  color: white;
+  border-radius: 6px;
+  transition: 0.2s;
+  padding: 8px;
+}
+.btn-delete:hover {
+  background: #af1717;
+  color: white;
+  transition: 0.9s;
+  border: 2px solid #af1717;
+  cursor: pointer;
+}

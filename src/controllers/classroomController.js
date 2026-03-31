@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import {
   nameClassroomRegex,
   nbMaxStudentRegex,
@@ -7,10 +6,10 @@ import {
   affectProfessor,
   countStudent,
   createClassroom,
-  nbClassroom,
   nbClassroomByProfessor,
   selectClassroom,
 } from "../../prisma/repository/classroomRepository.js";
+import { nbStudentClassroom } from "../../prisma/repository/studentRepository.js";
 
 export async function postCreateClassroom(req, res) {
   const { name, nbMaxStudent } = req.body;
@@ -51,23 +50,22 @@ export async function affectProfessorToClassroom(req, res) {
   const confirm = req.body.confirm === "true";
   console.log(req.body);
   console.log(req.body.confirm);
-  
 
   try {
     const professorHasClass = await nbClassroomByProfessor(Number(professor));
 
-    if (professorHasClass >= 1 && !confirm) {  //Si le prof possède déjà une classe ou plus et que le confirm n'existe pas (form du dashboard)=> redirection modal
-  
+    if (professorHasClass >= 1 && !confirm) {
+      //Si le prof possède déjà une classe ou plus et que le confirm n'existe pas (form du dashboard)=> redirection modal
+
       return res.render("pages/dashboardDirector.twig", {
         confirmAffectation: true,
         professor,
         classroom,
       });
     }
- 
-      await affectProfessor(Number(professor), Number(classroom));
-      res.redirect("/dashboardDirector");
-    
+
+    await affectProfessor(Number(professor), Number(classroom));
+    res.redirect("/dashboardDirector");
   } catch (error) {
     console.log(error);
     res.render("pages/dashboardDirector.twig", {
@@ -77,19 +75,34 @@ export async function affectProfessorToClassroom(req, res) {
   }
 }
 
-export async function getManagementClassroom(req,res){
-  const classrooms = await selectClassroom(req.session.user.school_id)
-  const countStudent = await countStudent(req.session.user.school_id)
+export async function getManagementClassroom(req, res) {
+  const classrooms = await selectClassroom(req.session.user.school_id);
+  const countStud = await nbStudentClassroom(req.session.user.school_id);
+  const arrayClassroom = [];
+
+  classrooms.forEach((classroom) => {
+    let nb = 0;
+
+    countStud.forEach((count) => {
+      if (count.classroom_id === classroom.id) {
+        nb = count._count.id;
+      }
+    });
+    arrayClassroom.push({
+      id: classroom.id,
+      name: classroom.name,
+      nbMaxStudent: classroom.nbMaxStudent,
+      nbStud: nb,
+    });
+  });
+
   try {
-      res.render("pages/classroom.twig", {
+    res.render("pages/classroom.twig", {
       title: "Gestion des classes",
       user: req.session.user,
-      classrooms,
-    countStudent
-      
+      classrooms: arrayClassroom,
     });
-    
   } catch (error) {
-     console.log(error);
+    console.log(error);
   }
 }

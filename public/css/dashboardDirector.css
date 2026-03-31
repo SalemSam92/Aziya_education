@@ -97,7 +97,8 @@ a {
 }
 a:hover {
   color: #35895f;
-  text-decoration: underline;
+  font-size: 1.1rem;
+  text-decoration: none;
   transition: 0.9s;
 }
 .affect-section {
@@ -142,7 +143,7 @@ label {
   text-align: center;
   margin-top: 20px;
 }
-#btn-affect:hover {
+#btn-affect-professor:hover,#btn-affect-classroom:hover {
   background: #44b37b;
   transition: 0.9s;
 }

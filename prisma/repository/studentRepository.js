@@ -72,3 +72,11 @@ export async function nbClassroomForStudent(id) {
     },
   });
 }
+
+export async function nbStudentClassroom(school_id) {       // Pour afficher le nb d'élève dans chaque classe dans la page classroom.twig
+  return await prisma.student.groupBy({
+    by :["classroom_id"],
+    where : {school_id},
+    _count :{id : true}
+  });
+}
