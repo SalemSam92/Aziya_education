@@ -23,6 +23,7 @@ export async function selectStudent(school_id) {
       lastname: true,
       firstname: true,
       birthday: true,
+      classroom: true,
     },
     where: {
       school_id: school_id,
@@ -54,7 +55,7 @@ export async function studentAddClassroom(school_id) {
   return await prisma.student.findMany({
     where: { school_id: school_id },
     include: {
-      classroom : true
+      classroom: true,
     },
     orderBy: {
       lastname: "asc",
@@ -73,10 +74,28 @@ export async function nbClassroomForStudent(id) {
   });
 }
 
-export async function nbStudentClassroom(school_id) {       // Pour afficher le nb d'élève dans chaque classe dans la page classroom.twig
+export async function nbStudentClassroom(school_id) {
+  // Pour afficher le nb d'élève dans chaque classe dans la page classroom.twig
   return await prisma.student.groupBy({
-    by :["classroom_id"],
-    where : {school_id},
-    _count :{id : true}
+    by: ["classroom_id"],
+    where: { school_id },
+    _count: { id: true },
+  });
+}
+
+export async function postUpdateStudent(id,lastname,firstname,birthday){
+  return await prisma.student.update({
+    data :{
+      lastname,
+      firstname,
+      birthday
+    },
+    where :{id : id}
+  })
+}
+
+export async function deleteStudent(id) {
+  return await prisma.student.delete({
+    where: { id: id },
   });
 }

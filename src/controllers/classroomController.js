@@ -6,7 +6,9 @@ import {
   affectProfessor,
   countStudent,
   createClassroom,
+  deleteClassroom,
   nbClassroomByProfessor,
+  postUpdateClassroom,
   selectClassroom,
 } from "../../prisma/repository/classroomRepository.js";
 import { nbStudentClassroom } from "../../prisma/repository/studentRepository.js";
@@ -76,32 +78,51 @@ export async function affectProfessorToClassroom(req, res) {
 }
 
 export async function getManagementClassroom(req, res) {
-  const classrooms = await selectClassroom(req.session.user.school_id);
-  const countStud = await nbStudentClassroom(req.session.user.school_id);
-  const arrayClassroom = [];
-
-  classrooms.forEach((classroom) => {
-    let nb = 0;
-
-    countStud.forEach((count) => {
-      if (count.classroom_id === classroom.id) {
-        nb = count._count.id;
-      }
-    });
-    arrayClassroom.push({
-      id: classroom.id,
-      name: classroom.name,
-      nbMaxStudent: classroom.nbMaxStudent,
-      nbStud: nb,
-    });
-  });
-
   try {
+    const classrooms = await selectClassroom(req.session.user.school_id);
+    const countStud = await nbStudentClassroom(req.session.user.school_id);
+    const arrayClassroom = []; // Fusion des deux tableaux (classrooms et countStud)
+
+    classrooms.forEach((classroom) => {
+      let nb = 0;
+
+      countStud.forEach((count) => {
+        if (count.classroom_id === classroom.id) {
+          nb = count._count.id;
+        }
+      });
+      arrayClassroom.push({
+        id: classroom.id,
+        name: classroom.name,
+        nbMaxStudent: classroom.nbMaxStudent,
+        nbStud: nb,
+      });
+    });
     res.render("pages/classroom.twig", {
       title: "Gestion des classes",
       user: req.session.user,
       classrooms: arrayClassroom,
+      updateClassroom : Number(req.params.id)
     });
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function postUpdate(req,res){
+  const {name,nbMaxStudent} = req.body
+  const {id} = req.params
+  try {
+    await postUpdateClassroom(Number(id),name,Number(nbMaxStudent))
+    res.redirect("/classroom")
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function deleteClass(req, res) {
+  const { id } = req.params;
+  try {
+    await deleteClassroom(Number(id));
+    res.redirect("/classroom");
   } catch (error) {
     console.log(error);
   }

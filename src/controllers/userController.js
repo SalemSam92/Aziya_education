@@ -9,8 +9,11 @@ import {
 } from "../services/regexDirector.js";
 import {
   createProfessor,
+  deleteProfessor,
+  getUpdateProfessor,
   login,
   nbProfessor,
+  postUpdateProfessor,
   registerDirector,
   selectProfessor,
 } from "../../prisma/repository/userRepository.js";
@@ -213,7 +216,7 @@ export async function getDashboardDirector(req, res) {
 
     const professors = await selectProfessor(req.session.user.school_id);
     const classrooms = await selectClassroom(req.session.user.school_id);
-    const studentsWithClassroom = await studentAddClassroom(req.session.user.school_id,);
+    const studentsWithClassroom = await studentAddClassroom(req.session.user.school_id);
     const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id);
     // const professorWithClassroom = await classroomWithProfessor(req.session.user.school_id,);
 
@@ -239,15 +242,55 @@ export async function getDashboardDirector(req, res) {
   }
 }
 
+//AFFICHE LA PAGE EN MODE LSTE
 export async function getManagementProfessor(req, res) {
-  const professors = await selectProfessor(req.session.user.school_id)
   try {
+    const professors = await selectProfessor(req.session.user.school_id);
     res.render("pages/professor.twig", {
       title: "Gestion professeurs",
       user: req.session.user,
-      professors
-      
+      professors,
     });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// AFFICHE LA PAGE EN MODE EDITION
+export async function getUpdate(req, res) {
+  const { professor_id } = req.params;
+  try {
+    const professors = await selectProfessor(req.session.user.school_id);
+    const updateProf = await getUpdateProfessor(Number(professor_id));
+    console.log(updateProf.id);
+
+    res.render("pages/professor.twig", {
+      title: "Gestion professeurs",
+      user: req.session.user,
+      professors,
+      updateProf: updateProf.id,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function postUpdate(req, res) {
+  const { lastname, firstname, mail } = req.body;
+  const { professor_id } = req.params;
+  try {
+    await postUpdateProfessor(Number(professor_id), lastname, firstname, mail);
+    res.redirect("/professor");
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function deleteProf(req, res) {
+  const { professor_id } = req.params;
+  try {
+    await deleteProfessor(Number(professor_id));
+    res.redirect("/professor");
   } catch (error) {
     console.log(error);
   }

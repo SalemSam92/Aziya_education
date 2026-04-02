@@ -1,5 +1,5 @@
 import express from "express"
-import { getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, postCreateProfessor, postLogin, postRegisterDirector } from "../controllers/userController.js"
+import { deleteProf, getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, getUpdate, postCreateProfessor, postLogin, postRegisterDirector, postUpdate } from "../controllers/userController.js"
 import { getRoleLogin } from "../services/RoleAurthguard.js"
 import { authguard } from "../services/authguardUser.js"
 import { verifieRoleDirector } from "../services/directorOnly.js"
@@ -25,6 +25,11 @@ userRouter.post("/login",postLogin,getRoleLogin)
 userRouter.get("/dashboardDirector",authguard,verifieRoleDirector, getDashboardDirector)
 userRouter.post("/dashboardDirector/:school_id/createProfessor",postCreateProfessor)
 userRouter.get("/professor",authguard,verifieRoleDirector,getManagementProfessor)
+userRouter.post("/professor/:professor_id/deleteProfessor",authguard,verifieRoleDirector,deleteProf)
+userRouter.get("/professor/:professor_id/updateProfessor",authguard,verifieRoleDirector,getUpdate)
+userRouter.post("/professor/:professor_id/updateProfessor",authguard,verifieRoleDirector,postUpdate)
+
+
 
 
 //Gestion Accès tableau de bord (Professeur)

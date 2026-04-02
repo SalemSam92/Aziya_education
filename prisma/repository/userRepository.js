@@ -84,3 +84,25 @@ export async function nbProfessor(school_id){
    }
   })
 }
+
+export async function getUpdateProfessor(professor_id){
+  return await prisma.user.findUnique({
+    where : {id : professor_id},
+  })
+}
+export async function postUpdateProfessor(professor_id,lastname,firstname,mail){
+  return await prisma.user.update({
+    data : {
+      lastname,
+      firstname,
+      mail
+    },
+    where :{id : professor_id}
+  })
+}
+
+export async function deleteProfessor(professor_id){
+  return await prisma.user.delete({
+    where : {id : professor_id}
+  })
+}

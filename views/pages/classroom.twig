@@ -2,10 +2,10 @@
 
 
 {% block style %}
-	<link rel="stylesheet" href="css/headerDashboard.css">
-	<link rel="stylesheet" href="css/dashboardDirector.css">
-	<link rel="stylesheet" href="css/table.css">
-	<link rel="stylesheet" href="css/footer.css">
+	<link rel="stylesheet" href="/css/headerDashboard.css">
+	<link rel="stylesheet" href="/css/dashboardDirector.css">
+	<link rel="stylesheet" href="/css/table.css">
+	<link rel="stylesheet" href="/css/footer.css">
 {% endblock %}
 
 {% block header %}
@@ -44,6 +44,7 @@
 		<div class="center">
 			<div class="table-container">
 				<h2>Liste des classes</h2>
+				<p>Gérer les informations des classes en toute simplicité</p>
 				<table class="table">
 					<thead>
 						<tr>
@@ -58,20 +59,22 @@
 					<tbody>
 						{% for classroom in classrooms %}
 							<tr>
-								<form action="/{{classroom.id}}/classroom/update" method={% if updateClassroom == classroom.id %} "post" {% else %} "get" {% endif %}>
+								<form action="/classroom/{{classroom.id}}/updateClassroom" method={% if updateClassroom == classroom.id %} "post" {% else %} "get" {% endif %}>
 									<td>
 										{% if updateClassroom == classroom.id %}
 											<input type="text" name="name" value="{{classroom.name}}">
 										{% else %}
 											{{ classroom.name }}
 										{% endif %}
+
 									</td>
 									<td>
-										{% if updateClassRoom == classroom.id %}
+										{% if updateClassroom == classroom.id %}
 											<input type="text" name="nbMaxStudent" value="{{classroom.nbMaxStudent}}">
 										{% else %}
 											{{ classroom.nbMaxStudent }}
 										{% endif %}
+
 									</td>
 									<td>{{ classroom.nbStud }}</td>
 									{# BOUTON MODIFIER / VALIDER #}
@@ -85,14 +88,16 @@
 										</button>
 									</td>
 								</form>
-								
+
 								{# FORMULAIRE SUPPRESSION #}
 								<td>
-									<form action="/{{ classroom.id }}/classroom/delete" method="post">
+									<form action="/classroom/{{classroom.id}}/deleteClassroom" method="post">
 										<button class="btn-delete">Supprimer</button>
 									</form>
 								</td>
-								<td><button id = "btn">Afficher les élèves</button></td>
+								<td>
+									<button id="btn">Afficher les élèves</button>
+								</td>
 
 							</tr>
 						{% endfor %}

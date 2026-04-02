@@ -9,6 +9,9 @@
   color: #35895f;
   margin-bottom: 20px;
 }
+.table-container p{
+  color: #333333b7;
+}
 .table {
   width: 100%;
   border-collapse: collapse; /*pour fusionner les bordures du tableau*/

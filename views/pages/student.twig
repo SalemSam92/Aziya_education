@@ -1,1 +1,129 @@
 {% extends "../layouts/base.twig" %}
+
+{% block style %}
+	<link rel="stylesheet" href="/css/headerDashboard.css">
+	<link rel="stylesheet" href="/css/dashboardDirector.css">
+	<link rel="stylesheet" href="/css/table.css">
+	<link rel="stylesheet" href="/css/footer.css">
+{% endblock %}
+
+{% block header %}
+	{% include "../partials/headerDashboard.twig" %}
+{% endblock %}
+
+
+{% block main %}
+
+
+	<div class="container">
+		<div class="sideBar">
+
+
+			<p class="nameUser">
+				{{user.lastname}}
+				{{user.firstname}}</p>
+
+			<p class="nameSchool">Etablissement:
+				{{user.school.name}}
+			</p>
+
+
+			<p>
+				<a href="/dashboardDirector">Tableau de bord</a>
+			</p>
+			<p>
+				<a href="/professor">Professeurs</a>
+			</p>
+			<p>
+				<a href="/classroom">Classes</a>
+			</p>
+
+		</div>
+
+
+		<div class="center">
+			<div class="table-container">
+				<h2>Liste des élèves</h2>
+				<p>Gérer les informations des élèves en toute simplicité</p>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Nom</th>
+							<th>Prénom</th>
+							<th>Date de naissance</th>
+							<th>Classes</th>
+							<th>Modifier</th>
+							<th>Supprimer</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						{% for student in students %}
+							<tr>
+								<form action="/student/{{student.id}}/updateStudent" method={% if updateStudent == student.id %} "post" {% else %} "get" {% endif %}>
+									<td>
+										{% if updateStudent == student.id %}
+											<input type="text" name="lastname" value="{{student.lastname}}">
+										{% else %}
+											{{student.lastname}}
+										{% endif %}
+
+									</td>
+									<td>
+										{% if updateStudent == student.id %}
+											<input type="text" name="firstname" value="{{student.firstname}}">
+										{% else %}
+											{{student.firstname}}
+										{% endif %}
+
+									</td>
+									<td>
+										{% if updateStudent == student.id %}
+											<input type="text" name="birthday" value="{{student.birthday|date("d/m/Y")}}">
+										{% else %}
+											{{student.birthday|date("d/m/Y")}}
+										{% endif %}
+
+									</td>
+									<td>
+										{% if updateStudent == student.id %}
+											<select name="" id="">
+												<option value="">-----Sélectionner une classe-----</option>
+												{% for classroom in capaciteMaxClassroom %}
+													{% if classroom.student >= classroom.student.length %}
+														<option value="{{classroom.id}}">
+															{{classroom.name}}
+														</option>
+													{% endif %}
+
+												{% endfor %}
+											</select>
+										{% else %}
+											{{student.classroom}}
+										{% endif %}
+
+									</td>
+									<td>
+										<button class="{% if updateStudent == student.id %}btn-validate{% endif %}">
+											{% if updateStudent == student.id %}
+												Valider
+											{% else %}
+												Modifier
+											{% endif %}
+										</button>
+									</td>
+								</form>
+								<td>
+									<form action="student/{{student.id}}/deleteStudent" method="post">
+										<button class="btn-delete">Supprimer</button>
+									</form>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+{% endblock %}

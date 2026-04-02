@@ -1,10 +1,10 @@
 {% extends "../layouts/base.twig" %}
 
 {% block style %}
-	<link rel="stylesheet" href="css/headerDashboard.css">
-	<link rel="stylesheet" href="css/dashboardDirector.css">
-	<link rel="stylesheet" href="css/table.css">
-	<link rel="stylesheet" href="css/footer.css">
+	<link rel="stylesheet" href="/css/headerDashboard.css">
+	<link rel="stylesheet" href="/css/dashboardDirector.css">
+	<link rel="stylesheet" href="/css/table.css">
+	<link rel="stylesheet" href="/css/footer.css">
 {% endblock %}
 
 {% block header %}
@@ -43,6 +43,7 @@
 		<div class="center">
 			<div class="table-container">
 				<h2>Liste des professeurs</h2>
+				<p>Gérer les informations des professeurs en toute simplicité</p>
 				<table class="table">
 					<thead>
 						<tr>
@@ -57,24 +58,30 @@
 					<tbody>
 						{% for professor in professors %}
 							<tr>
-								<form action="/{{professor.id}}/professor/update" method={% if updateProf == professor.id %} "POST" {% else %} "GET" {% endif %}>
+								<form action="/professor/{{professor.id}}/updateProfessor" method={% if updateProf == professor.id %} "POST" {% else %} "GET" {% endif %}>
 									<td>
 										{% if updateProf == professor.id %}
 											<input type="text" name="lastname" value="{{professor.lastname}}">
+										{% else %}
+											{{professor.lastname}}
 										{% endif %}
-										{{professor.lastname}}
+
 									</td>
 									<td>
 										{% if updateProf == professor.id %}
 											<input type="text" name="firstname" value="{{professor.firstname}}">
+										{% else %}
+											{{professor.firstname}}
 										{% endif %}
-										{{professor.firstname}}
+
 									</td>
 									<td>
 										{% if updateProf == professor.id %}
 											<input type="text" name="mail" value="{{professor.mail}}">
+										{% else %}
+											{{professor.mail}}
 										{% endif %}
-										{{professor.mail}}
+
 									</td>
 
 									<td>
@@ -88,7 +95,7 @@
 									</td>
 								</form>
 								<td>
-									<form action="/{{professor.id}}/professor/delete" method="post">
+									<form action="/professor/{{professor.id}}/deleteProfessor" method="post">
 										<button class="btn-delete">Supprimer</button>
 									</form>
 								</td>
@@ -97,7 +104,6 @@
 							</tr>
 						{% endfor %}
 					</tbody>
-				</tbody>
 			</table>
 		</div>
 	</div>
