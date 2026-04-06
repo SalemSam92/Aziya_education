@@ -158,7 +158,7 @@
 						<select name="classroom_id" id="classroom_student">
 							<option value="">------Selectionner une classe------</option>
 							{% for classroom in capaciteMaxClassroom %}
-								{% if classroom.nbMaxStudent >= classroom.student.length %} 
+								{% if classroom.nbMaxStudent > classroom.student.length %} 
 									<option value="{{classroom.id}}">
 										{{classroom.name}}
 									</option>

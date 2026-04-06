@@ -6,13 +6,18 @@ import {
 import {
   affectClassroom,
   createStudent,
+  deleteAffectation,
   deleteStudent,
   nbClassroomForStudent,
+  nbStudentClassroom,
   postUpdateStudent,
   selectStudent,
 } from "../../prisma/repository/studentRepository.js";
 import { dateAge } from "../services/verifieAge.js";
-import { nbStudentMaxByClassroom, selectClassroom } from "../../prisma/repository/classroomRepository.js";
+import {
+  nbStudentMaxByClassroom,
+  selectClassroom,
+} from "../../prisma/repository/classroomRepository.js";
 
 export async function postCreateStudent(req, res) {
   const { lastname, firstname, birthday } = req.body;
@@ -89,66 +94,93 @@ export async function affectClassroomToStudent(req, res) {
 }
 
 export async function getManagementStudent(req, res) {
-  const students = await selectStudent(req.session.user.school_id);
-  const classrooms = await selectClassroom(req.session.user.school_id);
-  const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id);
-  const arrayStudent = [];
-
-  students.forEach((student) => {
-    let classroomName = "";
-    classrooms.forEach((classroom) => {
-
-      if (!student.classroom) {
-       return classroomName = "Pas de classe assignée"
-      }
-     
-      
-      if (classroom.id == student.classroom.id) {
-        classroomName = classroom.name;
-      }
-    });
-    arrayStudent.push({
-      id : student.id,
-      lastname: student.lastname,
-      firstname: student.firstname,
-      birthday: student.birthday,
-      classroom: classroomName,
-    });
-  });
-
   try {
+    const students = await selectStudent(req.session.user.school_id);
+    const classrooms = await selectClassroom(req.session.user.school_id);
+    const capaciteMaxClassroom = await nbStudentMaxByClassroom(
+      req.session.user.school_id,
+    );
+    const arrayStudent = [];
+
+    students.forEach((student) => {
+      let classroomName = "";
+      let classroom_id;
+
+      classrooms.forEach((classroom) => {
+        if (!student.classroom) {
+          return (classroomName = "Pas de classe assignée");
+        }
+
+        if (classroom.id == student.classroom.id) {
+          classroomName = classroom.name;
+          classroom_id = classroom.id;
+        }
+      });
+      return arrayStudent.push({
+        id: student.id,
+        lastname: student.lastname,
+        firstname: student.firstname,
+        birthday: student.birthday,
+        classroom: classroomName,
+        classroomId: classroom_id,
+      });
+    });
     res.render("pages/student.twig", {
       title: "Gestion des élèves",
       user: req.session.user,
       students: arrayStudent,
       capaciteMaxClassroom,
-      updateStudent : Number(req.params.id),
+      updateStudent: Number(req.params.id),
     });
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function postUpdate(req,res){
-  const {lastname,firstname,birthday} = req.body
-  const {id} = req.params
+export async function postUpdate(req, res) {
+  const { lastname, firstname, birthday, classroom_id } = req.body;
+  const { id } = req.params;
+  let classroomId = classroom_id;
+
+  if (classroomId === "") { //Convertit classroom_id : si le champ est vide on met null, sinon on le transforme en nombre pour éviter les erreurs de clé étrangère.
+    classroomId = null;
+  } else {
+    classroomId = Number(classroom_id);
+  }
   try {
-    await postUpdateStudent(Number(id),lastname,firstname,new Date(birthday))
-    res.redirect("/student")
+    await nbStudentMaxByClassroom(req.session.user.id);
+    await postUpdateStudent(
+      Number(id),
+      lastname,
+      firstname,
+      new Date(birthday),
+      classroomId,
+    );
+
+    res.redirect("/student");
   } catch (error) {
     console.log(error);
-    
   }
 }
 
-
-export async function deleteStud(req,res){
-  const {id} = req.params
+export async function disconnectClassroom(req, res) {
+  const { classrom_id } = req.body;
+  const { id } = req.params;
   try {
-    await deleteStudent(Number(id))
-    res.redirect("/student")
+    console.log(req.body);
+    await deleteAffectation(Number(id), classrom_id);
+    res.redirect("/student");
   } catch (error) {
     console.log(error);
-    
+  }
+}
+
+export async function deleteStud(req, res) {
+  const { id } = req.params;
+  try {
+    await deleteStudent(Number(id));
+    res.redirect("/student");
+  } catch (error) {
+    console.log(error);
   }
 }

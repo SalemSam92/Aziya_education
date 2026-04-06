@@ -74,8 +74,8 @@ export async function nbClassroomForStudent(id) {
   });
 }
 
+ // Pour afficher le nb d'élève dans chaque classe dans la page classroom.twig
 export async function nbStudentClassroom(school_id) {
-  // Pour afficher le nb d'élève dans chaque classe dans la page classroom.twig
   return await prisma.student.groupBy({
     by: ["classroom_id"],
     where: { school_id },
@@ -83,15 +83,25 @@ export async function nbStudentClassroom(school_id) {
   });
 }
 
-export async function postUpdateStudent(id,lastname,firstname,birthday){
+export async function postUpdateStudent(id,lastname,firstname,birthday,classroom_id){
   return await prisma.student.update({
     data :{
       lastname,
       firstname,
-      birthday
+      birthday,
+      classroom_id
     },
     where :{id : id}
   })
+}
+
+export async function deleteAffectation(id,classroom_id) {
+  return await prisma.student.update({
+    where: { id: id },
+    data: {
+      classroom: {disconnect : {id :classroom_id}}
+    },
+  });
 }
 
 export async function deleteStudent(id) {

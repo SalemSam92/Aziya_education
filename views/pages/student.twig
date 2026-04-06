@@ -54,6 +54,11 @@
 							<th>Classes</th>
 							<th>Modifier</th>
 							<th>Supprimer</th>
+							{% for student in students %}
+								{% if updateStudent == student.id %}
+									<th>Retirer affection</th>
+								{% endif %}
+							{% endfor %}
 						</tr>
 					</thead>
 
@@ -79,7 +84,7 @@
 									</td>
 									<td>
 										{% if updateStudent == student.id %}
-											<input type="text" name="birthday" value="{{student.birthday|date("d/m/Y")}}">
+											<input type="date" name="birthday" value="{{student.birthday|date("Y-m-d")}}">
 										{% else %}
 											{{student.birthday|date("d/m/Y")}}
 										{% endif %}
@@ -87,21 +92,30 @@
 									</td>
 									<td>
 										{% if updateStudent == student.id %}
-											<select name="" id="">
-												<option value="">-----Sélectionner une classe-----</option>
-												{% for classroom in capaciteMaxClassroom %}
-													{% if classroom.student >= classroom.student.length %}
-														<option value="{{classroom.id}}">
-															{{classroom.name}}
-														</option>
+
+											{% for classroom in capaciteMaxClassroom if classroom.nbMaxStudent > classroom.student.length %}
+												{# le if ici sert a filtrer la boucle avant qu'elle commence #}
+												{# loop existe automatiquement dans chaque boucle for #}
+												{# loop =infos sur la boucle, loop.first =première itération, loop.last =dernière itération #}
+
+												{% if loop.first %}{# Premiere élément - ouverture du <select> #} 
+													<select name="classroom_id">
+														
 													{% endif %}
 
-												{% endfor %}
-											</select>
-										{% else %}
-											{{student.classroom}}
-										{% endif %}
+													<option value="{{ classroom.id }}">{{ classroom.name }}</option>
 
+													{% if loop.last %}{# Dernier élément - fermeture du <select> #}
+													</select>
+												{% endif %}
+
+											{% else %}
+												<p>Pas de classe disponible</p>
+											{% endfor %}
+
+										{% else %}
+											{{ student.classroom }}
+										{% endif %}
 									</td>
 									<td>
 										<button class="{% if updateStudent == student.id %}btn-validate{% endif %}">
@@ -118,6 +132,17 @@
 										<button class="btn-delete">Supprimer</button>
 									</form>
 								</td>
+								<td>
+									{% if  updateStudent == student.id  %}
+										<form action="/student/{{student.id}}/deleteAffectation" method="post">
+										<input type="hidden" name = "classroom_id" value = "{{student.classroomId}}">
+											<button class="btn-delete">retirer affection</button>
+										</form>
+
+									{% endif %}
+								</td>
+
+
 							</tr>
 						{% endfor %}
 					</tbody>
