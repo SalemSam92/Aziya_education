@@ -103,7 +103,6 @@ export async function deleteAffectation(id,classroom_id) {
     },
   });
 }
-
 export async function deleteStudent(id) {
   return await prisma.student.delete({
     where: { id: id },

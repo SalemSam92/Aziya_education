@@ -54,16 +54,6 @@ export async function nbStudentMaxByClassroom(school_id) {
   });
 }
 
-
-export async function deleteAffectation(id,student_id) {
-  return await prisma.classroom.update({
-    where: { id: id },
-    data: {
-      student: {disconnect : student_id}
-    },
-  });
-}
-
 export async function affectProfessor(professor_id, id) {
   return await prisma.classroom.update({
     data: {
@@ -105,5 +95,20 @@ export async function postUpdateClassroom(id, name, nbMaxStudent) {
 export async function deleteClassroom(id) {
   return await prisma.classroom.delete({
     where: { id: id },
+  });
+}
+
+export async function dipslayStudentByClassroom(school_id, id) {
+  return await prisma.classroom.findUnique({
+    where: { school_id: school_id, id: id },
+    select: { student: true },
+  });
+}
+export async function deleteAffectation(id, student_id) {
+  return await prisma.classroom.update({
+    where: { id: id },
+    data: {
+      student: { disconnect: { id: student_id } },
+    },
   });
 }

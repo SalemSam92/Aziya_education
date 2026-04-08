@@ -9,7 +9,7 @@
   color: #35895f;
   margin-bottom: 20px;
 }
-.table-container p{
+.table-container p {
   color: #333333b7;
 }
 .table {
@@ -68,4 +68,49 @@ button:hover {
   transition: 0.9s;
   border: 2px solid #af1717;
   cursor: pointer;
+}
+.buttons{
+  background-color: #35895f;
+  border: 2px solid #35895f;
+}
+.buttons:hover{
+  background-color: #35895f;
+  border: 2px solid #35895f;
+}
+
+/* Concerne uniquement le style de modalDisplayStudent.twig  */
+.modal-listStudent {
+  position: fixed;
+  inset: 0; /* Equivalent de top, left */
+  background-color: rgb(0, 0, 0, 0.6);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#close{
+  width: 95%;
+  margin: 10px auto;
+  padding: 10px;
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+#close:hover {
+  background: #af1717;
+  transition: 0.9s;
+}
+.messError {
+  background-color: rgba(255, 0, 0, 0.699);
+  color: #0a0a0ad0;
+  padding: 10px;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bolder;
+  width: 50%;
+  margin-top: 10px;
 }

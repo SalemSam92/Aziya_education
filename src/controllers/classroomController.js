@@ -6,7 +6,9 @@ import {
   affectProfessor,
   countStudent,
   createClassroom,
+  deleteAffectation,
   deleteClassroom,
+  dipslayStudentByClassroom,
   nbClassroomByProfessor,
   postUpdateClassroom,
   selectClassroom,
@@ -21,18 +23,15 @@ export async function postCreateClassroom(req, res) {
   console.log(req.params.school_id);
 
   if (!nameClassroomRegex.test(name) || !name) {
-    return res.render("pages/formAddclassroom.twig", {
-      tile: "Tableau de bord",
-      error:
-        "Veuillez saisir un nom de classe valide en majuscule (ex : CM2 A).",
-    });
+    req.session.errorAdd =
+      "Veuillez saisir un nom de classe valide en majuscule (ex : CM2 A).";
+    return res.redirect("/dashboardDirector");
   }
 
   if (!nbMaxStudentRegex.test(nbMaxStudent) || !nbMaxStudent) {
-    return res.render("pages/formAddclassroom.twig", {
-      tile: "Tableau de bord",
-      error: "Le nombre d'élèves doit être compris entre 0 et 35.",
-    });
+    req.session.errorAdd =
+      "Le nombre d'élèves doit être compris entre 0 et 35.";
+    return res.redirect("/dashboardDirector");
   }
   try {
     await createClassroom(name, Number(nbMaxStudent), Number(school_id));
@@ -78,9 +77,17 @@ export async function affectProfessorToClassroom(req, res) {
 }
 
 export async function getManagementClassroom(req, res) {
+  const classroomId = req.query.id; //Récupération de l'id de la classe via ?id=xxx dans modalClassroom.js
+
   try {
     const classrooms = await selectClassroom(req.session.user.school_id);
     const countStud = await nbStudentClassroom(req.session.user.school_id);
+    const allStudentByClassroom = classroomId
+      ? await dipslayStudentByClassroom(
+          req.session.user.school_id,
+          Number(classroomId),
+        )
+      : null; // Charge les élèves de la classe si un id est fourni(classromId), sinon renvoie null
     const arrayClassroom = []; // Fusion des deux tableaux (classrooms et countStud)
 
     classrooms.forEach((classroom) => {
@@ -98,22 +105,41 @@ export async function getManagementClassroom(req, res) {
         nbStud: nb,
       });
     });
+
+    // Récupération des messages stockés dans la session
+    const errorUpdate = req.session.errorUpdate;
+    // Nettoyage après affichage
+    req.session.errorUpdate = null
+
     res.render("pages/classroom.twig", {
       title: "Gestion des classes",
       user: req.session.user,
       classrooms: arrayClassroom,
-      updateClassroom : Number(req.params.id)
+      updateClassroom: Number(req.params.id),
+      allStudentByClassroom,
+      errorUpdate,
     });
   } catch (error) {
     console.log(error);
   }
 }
-export async function postUpdate(req,res){
-  const {name,nbMaxStudent} = req.body
-  const {id} = req.params
+export async function postUpdate(req, res) {
+  const { name, nbMaxStudent } = req.body;
+  const { id } = req.params;
+  if (!nameClassroomRegex.test(name) || !name) {
+    req.session.errorUpdate =
+      "Veuillez saisir un nom de classe valide en majuscule (ex : CM2 A).";
+    return res.redirect("/classroom");
+  }
+
+  if (!nbMaxStudentRegex.test(nbMaxStudent) || !nbMaxStudent) {
+    req.session.errorUpdate =
+      "Le nombre d'élèves doit être compris entre 0 et 35..";
+    return res.redirect("/classroom");
+  }
   try {
-    await postUpdateClassroom(Number(id),name,Number(nbMaxStudent))
-    res.redirect("/classroom")
+    await postUpdateClassroom(Number(id), name, Number(nbMaxStudent));
+    res.redirect("/classroom");
   } catch (error) {
     console.log(error);
   }
@@ -122,6 +148,18 @@ export async function deleteClass(req, res) {
   const { id } = req.params;
   try {
     await deleteClassroom(Number(id));
+    res.redirect("/classroom");
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function disconnectClass(req, res) {
+  const { student_id } = req.body;
+  const { id } = req.params;
+  try {
+    console.log(req.body);
+    await deleteAffectation(Number(id), Number(student_id));
     res.redirect("/classroom");
   } catch (error) {
     console.log(error);

@@ -1,7 +1,8 @@
 import express from "express"
-import { affectProfessorToClassroom, deleteClass, getManagementClassroom, postCreateClassroom, postUpdate } from "../controllers/classroomController.js"
+import { affectProfessorToClassroom, deleteClass, disconnectClass, getManagementClassroom, postCreateClassroom, postUpdate } from "../controllers/classroomController.js"
 import { authguard } from "../services/authguardUser.js"
 import { verifieRoleDirector } from "../services/directorOnly.js"
+
 
 
 
@@ -16,3 +17,4 @@ classroomRouter.get("/classroom",authguard,verifieRoleDirector,getManagementClas
 classroomRouter.post("/classroom/:id/deleteClassroom",authguard,verifieRoleDirector,deleteClass)
 classroomRouter.get("/classroom/:id/updateClassroom",authguard,verifieRoleDirector,getManagementClassroom)
 classroomRouter.post("/classroom/:id/updateClassroom",authguard,verifieRoleDirector,postUpdate)
+classroomRouter.post("/classroom/:id/deleteAffectation",authguard,verifieRoleDirector,disconnectClass)

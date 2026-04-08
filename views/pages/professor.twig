@@ -105,6 +105,11 @@
 						{% endfor %}
 					</tbody>
 			</table>
+			{% if errorUpdate %}
+					<div class="messError">
+						{{errorUpdate}}
+					</div>
+				{% endif %}
 		</div>
 	</div>
 

@@ -1,6 +1,5 @@
 {% extends "../layouts/base.twig" %}
 
-
 {% block style %}
 	<link rel="stylesheet" href="/css/headerDashboard.css">
 	<link rel="stylesheet" href="/css/dashboardDirector.css">
@@ -12,22 +11,15 @@
 	{% include "../partials/headerDashboard.twig" %}
 {% endblock %}
 
-
 {% block main %}
 
-
 	<div class="container">
+
 		<div class="sideBar">
-
-
-			<p class="nameUser">
-				{{user.lastname}}
-				{{user.firstname}}</p>
-
+			<p class="nameUser">{{ user.lastname }}
+				{{ user.firstname }}</p>
 			<p class="nameSchool">Etablissement:
-				{{user.school.name}}
-			</p>
-
+				{{ user.school.name }}</p>
 
 			<p>
 				<a href="/dashboardDirector">Tableau de bord</a>
@@ -40,44 +32,47 @@
 			</p>
 		</div>
 
-
 		<div class="center">
 			<div class="table-container">
 				<h2>Liste des classes</h2>
 				<p>Gérer les informations des classes en toute simplicité</p>
+
 				<table class="table">
 					<thead>
 						<tr>
 							<th>Nom de la classe</th>
 							<th>Capacité total</th>
 							<th>Nombre d'élève</th>
-							<th>Modfier</th>
+							<th>Modifier</th>
 							<th>Supprimer</th>
 							<th>Liste des élèves</th>
 						</tr>
 					</thead>
+
 					<tbody>
 						{% for classroom in classrooms %}
 							<tr>
-								<form action="/classroom/{{classroom.id}}/updateClassroom" method={% if updateClassroom == classroom.id %} "post" {% else %} "get" {% endif %}>
+
+								<form action="/classroom/{{ classroom.id }}/updateClassroom" method={% if updateClassroom == classroom.id %} "post" {% else %} "get" {% endif %}>
+
 									<td>
 										{% if updateClassroom == classroom.id %}
-											<input type="text" name="name" value="{{classroom.name}}">
+											<input type="text" name="name" value="{{ classroom.name }}">
 										{% else %}
 											{{ classroom.name }}
 										{% endif %}
-
 									</td>
+
 									<td>
 										{% if updateClassroom == classroom.id %}
-											<input type="text" name="nbMaxStudent" value="{{classroom.nbMaxStudent}}">
+											<input type="text" name="nbMaxStudent" value="{{ classroom.nbMaxStudent }}">
 										{% else %}
 											{{ classroom.nbMaxStudent }}
 										{% endif %}
-
 									</td>
+
 									<td>{{ classroom.nbStud }}</td>
-									{# BOUTON MODIFIER / VALIDER #}
+
 									<td>
 										<button class="{% if updateClassroom == classroom.id %}btn-validate{% endif %}">
 											{% if updateClassroom == classroom.id %}
@@ -87,24 +82,45 @@
 											{% endif %}
 										</button>
 									</td>
+
 								</form>
 
-								{# FORMULAIRE SUPPRESSION #}
 								<td>
-									<form action="/classroom/{{classroom.id}}/deleteClassroom" method="post">
+									<form action="/classroom/{{ classroom.id }}/deleteClassroom" method="post">
 										<button class="btn-delete">Supprimer</button>
 									</form>
 								</td>
+
 								<td>
-									<button id="btn">Afficher les élèves</button>
+									<button class="buttons" data-classroom-id="{{ classroom.id }}">
+										Afficher les élèves
+									</button>
 								</td>
 
 							</tr>
 						{% endfor %}
 					</tbody>
-				</tbody>
-			</table>
+				</table>
+				{% if errorUpdate %}
+					<div class="messError">
+						{{errorUpdate}}
+					</div>
+				{% endif %}
+			</div>
 		</div>
 	</div>
+	{% if allStudentByClassroom %}
+		{# si id est fourni par le req.query (au click du bouton "Afficher les élèves" ) #}
+		<div class="modal-listStudent" id="modal-listStudent" style="display:flex">
+			<div class="modal-container">
+				{% include "../pages/modalDisplayStudent.twig" %}
+			</div>
+		</div>
+	{% endif %}
 
+
+{% endblock %}
+
+{% block script %}
+	<script src="/scripts/modalClassroom.js"></script>
 {% endblock %}

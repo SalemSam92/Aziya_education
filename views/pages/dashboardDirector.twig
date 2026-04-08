@@ -56,17 +56,20 @@
 						<b>{{totalStudent}}</b>
 					</p>
 				</div>
-
 			</div>
 			<div class="box-btn">
 				<button id="btn-add-professor">Ajouter un professeur</button>
 				<button id="btn-add-classroom">Ajouter une classe</button>
 				<button id="btn-add-student">Ajouter un élève</button>
 			</div>
+				{% if errorAdd %}
+			<div class="messError">
+				{{errorAdd}}
+			</div>
+		{% endif %}
 			<div class="modal-professor" id="modal-add-professor">
 				<div class="modal-container">
 					{% include "../pages/formAddProfessor.twig" %}
-
 				</div>
 			</div>
 			<div class="modal-classroom" id="modal-add-classroom">
@@ -106,13 +109,8 @@
 								{% endfor %}
 							</select>
 
-							<button type="submit" id="btn-affect-professor">Affecter</button>
-
-							
-							
+							<button type="submit" id="btn-affect-professor">Affecter</button>	
 						</div>
-
-
 						<div class="form-group">
 							<label for="classroom">Liste des classes</label>
 							<select name="classroom" id="classroom">
@@ -124,15 +122,10 @@
 						</select>
 					</div>
 				</form>
-
-
-			
 			</div>
 		</div>
-		
 
 		<div class="affect-section">
-
 			<h3>Affecter des élèves à une classe</h3>
 			<div class="classroom-professor">
 
@@ -169,7 +162,7 @@
 					</div>
 				</div>
 			</form>
-
+	
 		</div>
 		<div class="link-affect">
 			<a href="">Accéder à liste des professeurs avec leur classe</a>
@@ -179,5 +172,5 @@
 
 
 {% block script %}
-	<script src="scripts/modal.js"></script>
+	<script src="scripts/modalDashboard.js"></script>
 {% endblock %}{% endblock %}

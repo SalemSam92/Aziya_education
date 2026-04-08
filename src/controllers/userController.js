@@ -169,27 +169,25 @@ export async function postCreateProfessor(req, res) {
   const { school_id } = req.params;
 
   if (!lastnameRegex.test(lastname) || !lastname) {
-    return res.render("pages/formAddProfessor.twig", {
-      error:
-        "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).",
-    });
+    req.session.errorAdd =
+      "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/dashboardDirector");
   }
+
   if (!firstnameRegex.test(firstname) || !firstname) {
-    return res.render("pages/formAddProfessor.twig", {
-      error:
-        "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).",
-    });
+    req.session.errorAdd =
+      "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/dashboardDirector");
   }
+
   if (!mailRegex.test(mail) || !mail) {
-    return res.render("pages/formAddProfessor", {
-      error: "Veuillez saisir une adresse e-mail valide",
-    });
+    req.session.errorAdd = "Veuillez saisir une adresse e-mail valide.";
+    return res.redirect("/dashboardDirector");
   }
   if (!passwordRegex.test(password) || !password) {
-    return res.render("pages/formAddProfessor.twig", {
-      error:
-        "Le mot de passe doit contenir au mininum 8 caractères, au moins un chiffre et au moins une lettre majuscule.",
-    });
+    req.session.errorAdd =
+      "Le mot de passe doit contenir au mininum 8 caractères, au moins un chiffre et au moins une lettre majuscule.";
+    return res.redirect("/dashboardDirector");
   }
 
   try {
@@ -216,11 +214,18 @@ export async function getDashboardDirector(req, res) {
 
     const professors = await selectProfessor(req.session.user.school_id);
     const classrooms = await selectClassroom(req.session.user.school_id);
-    const studentsWithClassroom = await studentAddClassroom(req.session.user.school_id);
-    const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id);
+    const studentsWithClassroom = await studentAddClassroom(
+      req.session.user.school_id,
+    );
+    const capaciteMaxClassroom = await nbStudentMaxByClassroom(
+      req.session.user.school_id,
+    );
     // const professorWithClassroom = await classroomWithProfessor(req.session.user.school_id,);
 
     //faire sessionError et sessionSuccès
+    const errorAdd = req.session.errorAdd;
+    // Nettoyage après affichage
+    req.session.errorAdd = null;
 
     res.render("pages/dashboardDirector.twig", {
       title: "Tableau de bord",
@@ -232,6 +237,7 @@ export async function getDashboardDirector(req, res) {
       totalClassroom,
       studentsWithClassroom,
       capaciteMaxClassroom,
+      errorAdd,
     });
   } catch (error) {
     console.log(error);
@@ -244,12 +250,17 @@ export async function getDashboardDirector(req, res) {
 
 //AFFICHE LA PAGE EN MODE LSTE
 export async function getManagementProfessor(req, res) {
+     // Récupération des messages stockés dans la session
+    const errorUpdate = req.session.errorUpdate;
+    // Nettoyage après affichage
+    req.session.errorUpdate = null
   try {
     const professors = await selectProfessor(req.session.user.school_id);
     res.render("pages/professor.twig", {
       title: "Gestion professeurs",
       user: req.session.user,
       professors,
+      errorUpdate
     });
   } catch (error) {
     console.log(error);
@@ -278,11 +289,31 @@ export async function getUpdate(req, res) {
 export async function postUpdate(req, res) {
   const { lastname, firstname, mail } = req.body;
   const { professor_id } = req.params;
+
+  if (!lastnameRegex.test(lastname) || !lastname) {
+     req.session.errorUpdate =
+       "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/professor");
+  }
+  if (!firstnameRegex.test(firstname) || !firstname) {
+     req.session.errorUpdate =
+       "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/professor");
+  }
+  if (!mailRegex.test(mail) || !mail) {
+       req.session.errorUpdate =
+       "Veuillez saisir une adresse e-mail valide.";
+    return res.redirect("/professor");
+  }
   try {
     await postUpdateProfessor(Number(professor_id), lastname, firstname, mail);
     res.redirect("/professor");
   } catch (error) {
-    console.log(error);
+    console.log(errorUpdate.message);
+    res.render("pages/professor.twig", {
+      title: "Gestion professeurs",
+      errorUpdate,
+    });
   }
 }
 

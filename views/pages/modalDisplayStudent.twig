@@ -1,0 +1,34 @@
+<div class="box">
+	<div class="table-container">
+		<h2>Liste des élèves</h2>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>Date de naissance</th>
+					<th>Retirer affection</th>
+
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for allStudent in allStudentByClassroom.student %}
+					<tr>
+						<td>{{ allStudent.lastname }}</td>
+						<td>{{ allStudent.firstname }}</td>
+						<td>{{ allStudent.birthday|date("d/m/Y") }}</td>
+						<td>
+							<form action="/classroom/{{allStudent.classroom_id}}/deleteAffectation" method="post">
+								<input type="hidden" name="student_id" value="{{allStudent.id}}">
+								<button class="btn-delete">retirer affection</button>
+							</form> 
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<button type="button" class="closeModal" id="close">Fermer</button>
+</div></div>

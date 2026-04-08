@@ -26,27 +26,25 @@ export async function postCreateStudent(req, res) {
   console.log(req.params);
 
   if (!lastnameRegex.test(lastname) || !lastname) {
-    return res.render("pages/formAddStudent.twig", {
-      error:
-        "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).",
-    });
+    req.session.errorAdd =
+      "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/dashboardDirector");
   }
   if (!firstnameRegex.test(firstname) || !firstname) {
-    return res.render("pages/formAddStudent.twig", {
-      error:
-        "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).",
-    });
+    req.session.errorAdd =
+      "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/dashboardDirector");
   }
   if (!birthdayRegex.test(birthday) || !birthday) {
-    return res.render("pages/formAddStudent.twig", {
-      error:
-        "Veuillez saisir une date de naissance valide au format JJ/MM/AAAA.",
-    });
+    req.session.errorAdd =
+      "Veuillez saisir une date de naissance valide au format JJ/MM/AAAA.";
+    return res.redirect("/dashboardDirector");
   }
+
   if (dateAge(birthday) <= 5 || dateAge(birthday) >= 12) {
-    return res.render("pages/formAddStudent.twig", {
-      error: "L'âge de l'éleve doit être compris entre 5 et 12 ans",
-    });
+    req.session.errorAdd =
+      "L'âge de l'éleve doit être compris entre 5 et 12 ans";
+    return res.redirect("/dashboardDirector");
   }
   try {
     await createStudent(
@@ -67,21 +65,10 @@ export async function postCreateStudent(req, res) {
 
 export async function affectClassroomToStudent(req, res) {
   const { student_id, classroom_id } = req.body;
-  // const confirm_Student = req.body.confirm === "true"
 
   console.log(req.body);
 
   try {
-    // const studentHasClassroom = await nbClassroomForStudent(Number(student_id)) //Récuperation de l'id de l'élève avec sa classe (classroom_id)
-
-    // if (studentHasClassroom  && !confirm_Student) {     //Vérification si l’élève a déjà une classe et que l'utilisateur n'a pas confirmé
-    //   return res.render("pages/dashboardDirector.twig",{
-    //     confirmAffectStudent : true,
-    //     student_id,
-    //     classroom_id
-    //   })
-    // }
-
     await affectClassroom(Number(student_id), Number(classroom_id));
     res.redirect("/dashboardDirector");
   } catch (error) {
@@ -125,12 +112,18 @@ export async function getManagementStudent(req, res) {
         classroomId: classroom_id,
       });
     });
+     // Récupération des messages stockés dans la session
+    const errorUpdate = req.session.errorUpdate;
+    // Nettoyage après affichage
+    req.session.errorUpdate = null
+
     res.render("pages/student.twig", {
       title: "Gestion des élèves",
       user: req.session.user,
       students: arrayStudent,
       capaciteMaxClassroom,
       updateStudent: Number(req.params.id),
+      errorUpdate
     });
   } catch (error) {
     console.log(error);
@@ -140,9 +133,34 @@ export async function getManagementStudent(req, res) {
 export async function postUpdate(req, res) {
   const { lastname, firstname, birthday, classroom_id } = req.body;
   const { id } = req.params;
+
+  if (!lastnameRegex.test(lastname) || !lastname) {
+    req.session.errorUpdate =
+      "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/student");
+  }
+  if (!firstnameRegex.test(firstname) || !firstname) {
+    req.session.errorUpdate =
+      "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/student");
+  }
+
+  if (!birthdayRegex.test(birthday) || !birthday) {
+    req.session.errorUpdate =
+      "Veuillez saisir une date de naissance valide au format JJ/MM/AAAA.";
+    return res.redirect("/student");
+  }
+
+  if (dateAge(birthday) <= 5 || dateAge(birthday) >= 12) {
+      req.session.errorUpdate =
+      "L'âge de l'éleve doit être compris entre 5 et 12 ans";
+    return res.redirect("/student");
+    };
+  
   let classroomId = classroom_id;
 
-  if (classroomId === "") { //Convertit classroom_id : si le champ est vide on met null, sinon on le transforme en nombre pour éviter les erreurs de clé étrangère.
+  if (classroomId === "") {
+    //Convertit classroom_id : si le champ est vide on met null, sinon on le transforme en nombre pour éviter les erreurs de clé étrangère.
     classroomId = null;
   } else {
     classroomId = Number(classroom_id);
@@ -160,6 +178,10 @@ export async function postUpdate(req, res) {
     res.redirect("/student");
   } catch (error) {
     console.log(error);
+    res.render("pages/student.twig", {
+      title: "Gestion des élèves",
+      errorUpdate,
+    });
   }
 }
 
