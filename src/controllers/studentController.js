@@ -53,6 +53,7 @@ export async function postCreateStudent(req, res) {
       new Date(birthday),
       Number(school_id),
     );
+    req.session.succes = "Création effectuée.";
     res.redirect("/dashboardDirector");
   } catch (error) {
     console.log(error.message);
@@ -68,8 +69,14 @@ export async function affectClassroomToStudent(req, res) {
 
   console.log(req.body);
 
+  if (!student_id || !classroom_id) {
+    req.session.errorAdd =
+      "Veuillez sélectionner un élève et une classe avant de poursuivre.";
+    return res.redirect("/dashboardDirector");
+  }
   try {
     await affectClassroom(Number(student_id), Number(classroom_id));
+    req.session.succes = "Affectation réalisée avec succès."
     res.redirect("/dashboardDirector");
   } catch (error) {
     console.log(error);
@@ -112,10 +119,12 @@ export async function getManagementStudent(req, res) {
         classroomId: classroom_id,
       });
     });
-     // Récupération des messages stockés dans la session
+    // Récupération des messages stockés dans la session
     const errorUpdate = req.session.errorUpdate;
+    const messSucces = req.session.succes;
     // Nettoyage après affichage
-    req.session.errorUpdate = null
+    req.session.errorUpdate = null;
+    req.session.succes = null;
 
     res.render("pages/student.twig", {
       title: "Gestion des élèves",
@@ -123,7 +132,8 @@ export async function getManagementStudent(req, res) {
       students: arrayStudent,
       capaciteMaxClassroom,
       updateStudent: Number(req.params.id),
-      errorUpdate
+      errorUpdate,
+      messSucces,
     });
   } catch (error) {
     console.log(error);
@@ -152,11 +162,11 @@ export async function postUpdate(req, res) {
   }
 
   if (dateAge(birthday) <= 5 || dateAge(birthday) >= 12) {
-      req.session.errorUpdate =
+    req.session.errorUpdate =
       "L'âge de l'éleve doit être compris entre 5 et 12 ans";
     return res.redirect("/student");
-    };
-  
+  }
+
   let classroomId = classroom_id;
 
   if (classroomId === "") {
@@ -174,7 +184,7 @@ export async function postUpdate(req, res) {
       new Date(birthday),
       classroomId,
     );
-
+    req.session.succes = "Modification enregistrée.";
     res.redirect("/student");
   } catch (error) {
     console.log(error);
@@ -191,6 +201,7 @@ export async function disconnectClassroom(req, res) {
   try {
     console.log(req.body);
     await deleteAffectation(Number(id), classrom_id);
+    req.session.succes = "Modification enregistrée.";
     res.redirect("/student");
   } catch (error) {
     console.log(error);
@@ -201,6 +212,7 @@ export async function deleteStud(req, res) {
   const { id } = req.params;
   try {
     await deleteStudent(Number(id));
+    req.session.succes = "Suppression effectuée.";
     res.redirect("/student");
   } catch (error) {
     console.log(error);

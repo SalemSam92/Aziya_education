@@ -101,13 +101,19 @@
 						{% endfor %}
 					</tbody>
 				</table>
-				{% if errorUpdate %}
+			</div>
+			{% if errorUpdate %}
 					<div class="messError">
 						{{errorUpdate}}
 					</div>
 				{% endif %}
-			</div>
+					{% if messSucces %}
+					<div class="messSucces">
+						{{messSucces}}
+					</div>
+				{% endif %}
 		</div>
+		
 	</div>
 	{% if allStudentByClassroom %}
 		{# si id est fourni par le req.query (au click du bouton "Afficher les élèves" ) #}

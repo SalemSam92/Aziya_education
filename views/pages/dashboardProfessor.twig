@@ -1,6 +1,17 @@
 {% extends "../layouts/base.twig" %}
+{% block style %}
+	<link rel="stylesheet" href="css/headerDashboard.css">
+	<link rel="stylesheet" href="css/dashboardDirector.css">
+	<link rel="stylesheet" href="css/footer.css">
+{% endblock %}
 
+{% block header %}
+	{% include "../partials/headerDashboard.twig" %}
+{% endblock %}
 {% block main %}
-<p>page Professeur </p>
-<p>Bonjour {{user.lastname}} {{user.firstname}} </p>
+	
+	<p>Bonjour
+		{{user.lastname}}
+		{{user.firstname}}
+	</p>
 {% endblock %}

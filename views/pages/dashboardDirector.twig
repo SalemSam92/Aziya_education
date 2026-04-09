@@ -62,11 +62,16 @@
 				<button id="btn-add-classroom">Ajouter une classe</button>
 				<button id="btn-add-student">Ajouter un élève</button>
 			</div>
-				{% if errorAdd %}
-			<div class="messError">
-				{{errorAdd}}
-			</div>
-		{% endif %}
+			{% if errorAdd %}
+				<div class="messError">
+					{{errorAdd}}
+				</div>
+			{% endif %}
+			{% if messSucces %}
+				<div class="messSucces">
+					{{messSucces}}
+				</div>
+			{% endif %}
 			<div class="modal-professor" id="modal-add-professor">
 				<div class="modal-container">
 					{% include "../pages/formAddProfessor.twig" %}
@@ -82,14 +87,14 @@
 					{% include "../pages/formAddStudent.twig" %}
 				</div>
 			</div>
-				<div class="modal-confirm" >
+			<div class="modal-confirm">
 
-					{% if confirmAffectation %}
-						<div class="modal-container">
-							{% include "../pages/modalConfirmAffectProf.twig" %}
-						</div>
-					{% endif %}
-				</div>
+				{% if confirmAffectation %}
+					<div class="modal-container">
+						{% include "../pages/modalConfirmAffectProf.twig" %}
+					</div>
+				{% endif %}
+			</div>
 
 
 			<div class="affect-section">
@@ -109,7 +114,7 @@
 								{% endfor %}
 							</select>
 
-							<button type="submit" id="btn-affect-professor">Affecter</button>	
+							<button type="submit" id="btn-affect-professor">Affecter</button>
 						</div>
 						<div class="form-group">
 							<label for="classroom">Liste des classes</label>
@@ -118,59 +123,60 @@
 								{% for classroom in classrooms %}
 									<option value="{{classroom.id}}">{{classroom.name}}</option>
 								{% endfor %}
-						
-						</select>
+
+							</select>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="affect-section">
+				<h3>Affecter des élèves à une classe</h3>
+				<div class="classroom-professor">
+
+					<form class="form" action="/dashboardDirector/affect" method="post">
+
+						<div class="form-group">
+							<label for="student">Liste des élèves</label>
+							<select name="student_id" id="student">
+								<option value="">------Selectionner un élève------</option>
+								{% for studentWithClassroom in studentsWithClassroom %}
+									{% if not studentWithClassroom.classroom %}
+										<option value="{{studentWithClassroom.id}}">{{studentWithClassroom.lastname}}
+											{{studentWithClassroom.firstname}}
+										</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+							<button type="submit" id="btn-affect-classroom">Affecter</button>
+						</div>
+
+						<div class="form-group">
+							<label for="classroom_student">Liste des classes</label>
+							<select name="classroom_id" id="classroom_student">
+								<option value="">------Selectionner une classe------</option>
+								{% for classroom in capaciteMaxClassroom %}
+									{% if classroom.nbMaxStudent > classroom.student.length %}
+										<option value="{{classroom.id}}">
+											{{classroom.name}}
+										</option>
+									{% endif %}
+								{% endfor %}
+
+							</select>
+						</div>
 					</div>
 				</form>
+
+			</div>
+			<div class="link-affect">
+				<a href="">Accéder à liste des professeurs avec leur classe</a>
 			</div>
 		</div>
-
-		<div class="affect-section">
-			<h3>Affecter des élèves à une classe</h3>
-			<div class="classroom-professor">
-
-				<form class="form" action="/dashboardDirector/affect" method="post">
-
-					<div class="form-group">
-						<label for="student">Liste des élèves</label>
-						<select name="student_id" id="student">
-							<option value="">------Selectionner un élève------</option>
-							{% for studentWithClassroom in studentsWithClassroom %}
-								{% if not studentWithClassroom.classroom %}
-									<option value="{{studentWithClassroom.id}}">{{studentWithClassroom.lastname}}
-										{{studentWithClassroom.firstname}}
-									</option>
-								{% endif %}
-							{% endfor %}
-						</select>
-						<button type="submit" id="btn-affect-classroom">Affecter</button>
-					</div>
-
-					<div class="form-group">
-						<label for="classroom_student">Liste des classes</label>
-						<select name="classroom_id" id="classroom_student">
-							<option value="">------Selectionner une classe------</option>
-							{% for classroom in capaciteMaxClassroom %}
-								{% if classroom.nbMaxStudent > classroom.student.length %} 
-									<option value="{{classroom.id}}">
-										{{classroom.name}}
-									</option>
-								{% endif %}
-							{% endfor %} 
-
-						</select>
-					</div>
-				</div>
-			</form>
-	
-		</div>
-		<div class="link-affect">
-			<a href="">Accéder à liste des professeurs avec leur classe</a>
-		</div>
 	</div>
-</div>
 
 
-{% block script %}
-	<script src="scripts/modalDashboard.js"></script>
-{% endblock %}{% endblock %}
+	{% block script %}
+		<script src="scripts/modalDashboard.js"></script>
+	{% endblock %}
+{% endblock %}

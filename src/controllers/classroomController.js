@@ -35,7 +35,7 @@ export async function postCreateClassroom(req, res) {
   }
   try {
     await createClassroom(name, Number(nbMaxStudent), Number(school_id));
-
+    req.session.succes = "Création effectuée.";
     res.redirect("/dashboardDirector");
   } catch (error) {
     console.log(error.message);
@@ -51,6 +51,12 @@ export async function affectProfessorToClassroom(req, res) {
   const confirm = req.body.confirm === "true";
   console.log(req.body);
   console.log(req.body.confirm);
+  
+  if (!professor || !classroom) {
+    req.session.errorAdd =
+      "Veuillez sélectionner un professeur et une classe avant de poursuivre.";
+    return res.redirect("/dashboardDirector");
+  }
 
   try {
     const professorHasClass = await nbClassroomByProfessor(Number(professor));
@@ -66,6 +72,7 @@ export async function affectProfessorToClassroom(req, res) {
     }
 
     await affectProfessor(Number(professor), Number(classroom));
+    req.session.succes = "Affectation réalisée avec succès.";
     res.redirect("/dashboardDirector");
   } catch (error) {
     console.log(error);
@@ -108,8 +115,10 @@ export async function getManagementClassroom(req, res) {
 
     // Récupération des messages stockés dans la session
     const errorUpdate = req.session.errorUpdate;
+    const messSucces = req.session.succes;
     // Nettoyage après affichage
-    req.session.errorUpdate = null
+    req.session.errorUpdate = null;
+    req.session.succes = null;
 
     res.render("pages/classroom.twig", {
       title: "Gestion des classes",
@@ -118,6 +127,7 @@ export async function getManagementClassroom(req, res) {
       updateClassroom: Number(req.params.id),
       allStudentByClassroom,
       errorUpdate,
+      messSucces,
     });
   } catch (error) {
     console.log(error);
@@ -139,6 +149,7 @@ export async function postUpdate(req, res) {
   }
   try {
     await postUpdateClassroom(Number(id), name, Number(nbMaxStudent));
+    req.session.succes = "Modification enregistrée.";
     res.redirect("/classroom");
   } catch (error) {
     console.log(error);
@@ -148,6 +159,7 @@ export async function deleteClass(req, res) {
   const { id } = req.params;
   try {
     await deleteClassroom(Number(id));
+    req.session.succes = "Suppression effectuée.";
     res.redirect("/classroom");
   } catch (error) {
     console.log(error);

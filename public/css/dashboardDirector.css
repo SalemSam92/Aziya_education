@@ -201,3 +201,14 @@ label {
   text-align: center;
   border-radius: 8px;
 }
+.messSucces {
+  background-color: #41b179b7;
+  color: #0a0a0ae3;
+  padding: 10px;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bolder;
+  width: 90%;
+  margin-top: 10px;
+}

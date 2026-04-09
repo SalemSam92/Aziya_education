@@ -191,16 +191,27 @@ export async function postCreateProfessor(req, res) {
   }
 
   try {
+    const user = await login(mail);
+    console.log(user);
     const hashPassword = await bcrypt.hash(password, 10);
 
-    await createProfessor(
-      lastname,
-      firstname,
-      mail,
-      hashPassword,
-      Number(school_id),
-    );
-    res.redirect("/dashboardDirector");
+    if (!user) {
+      // Aucun utilisateur n'existe avec cet e‑mail : on peut créer le professeur
+      const newUser = await createProfessor(
+        lastname,
+        firstname,
+        mail,
+        hashPassword,
+        Number(school_id),
+      );
+      req.session.succes = "Création effectuée.";
+      res.redirect("/dashboardDirector");
+    }
+    if (user) {
+      // Si Un utilisateur existe déjà avec cet e‑mail : création refusé et on affiche une erreur
+      req.session.errorAdd = "Cette adresse e‑mail est déjà utilisée.";
+      return res.redirect("/dashboardDirector");
+    }
   } catch (error) {
     console.log(error);
   }
@@ -224,8 +235,10 @@ export async function getDashboardDirector(req, res) {
 
     //faire sessionError et sessionSuccès
     const errorAdd = req.session.errorAdd;
+    const messSucces = req.session.succes;
     // Nettoyage après affichage
     req.session.errorAdd = null;
+    req.session.succes = null;
 
     res.render("pages/dashboardDirector.twig", {
       title: "Tableau de bord",
@@ -238,6 +251,7 @@ export async function getDashboardDirector(req, res) {
       studentsWithClassroom,
       capaciteMaxClassroom,
       errorAdd,
+      messSucces,
     });
   } catch (error) {
     console.log(error);
@@ -250,17 +264,20 @@ export async function getDashboardDirector(req, res) {
 
 //AFFICHE LA PAGE EN MODE LSTE
 export async function getManagementProfessor(req, res) {
-     // Récupération des messages stockés dans la session
-    const errorUpdate = req.session.errorUpdate;
-    // Nettoyage après affichage
-    req.session.errorUpdate = null
+  // Récupération des messages stockés dans la session
+  const errorUpdate = req.session.errorUpdate;
+  const messSucces = req.session.succes;
+  // Nettoyage après affichage
+  req.session.errorUpdate = null;
+  req.session.succes = null;
   try {
     const professors = await selectProfessor(req.session.user.school_id);
     res.render("pages/professor.twig", {
       title: "Gestion professeurs",
       user: req.session.user,
       professors,
-      errorUpdate
+      errorUpdate,
+      messSucces,
     });
   } catch (error) {
     console.log(error);
@@ -291,22 +308,22 @@ export async function postUpdate(req, res) {
   const { professor_id } = req.params;
 
   if (!lastnameRegex.test(lastname) || !lastname) {
-     req.session.errorUpdate =
-       "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    req.session.errorUpdate =
+      "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
     return res.redirect("/professor");
   }
   if (!firstnameRegex.test(firstname) || !firstname) {
-     req.session.errorUpdate =
-       "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    req.session.errorUpdate =
+      "Veuillez saisir un prénom valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
     return res.redirect("/professor");
   }
   if (!mailRegex.test(mail) || !mail) {
-       req.session.errorUpdate =
-       "Veuillez saisir une adresse e-mail valide.";
+    req.session.errorUpdate = "Veuillez saisir une adresse e-mail valide.";
     return res.redirect("/professor");
   }
   try {
     await postUpdateProfessor(Number(professor_id), lastname, firstname, mail);
+    req.session.succes = "Modification enregistrée.";
     res.redirect("/professor");
   } catch (error) {
     console.log(errorUpdate.message);
@@ -321,6 +338,7 @@ export async function deleteProf(req, res) {
   const { professor_id } = req.params;
   try {
     await deleteProfessor(Number(professor_id));
+    req.session.succes = "Suppression effectuée.";
     res.redirect("/professor");
   } catch (error) {
     console.log(error);
@@ -331,8 +349,40 @@ export async function getDashboarProfessor(req, res) {
   try {
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
+      user: req.session.user
     });
   } catch (error) {
     console.log(error);
   }
+}
+
+//Fonction logout pour le director et le professeur
+export async function logout(req, res) {
+  const role = req.session.user.role; //Récupération du rôle avant la destruction de la session
+
+  req.session.destroy(function (err) {
+    // Destruction de la session côté serveur pour déconnecter complètement l'utilisateur
+
+    if (!err) {
+      // Si aucune erreur : la session est détruite, on renvoie l'utilisateur vers la page de connexion
+      return res.redirect("/login");
+    }
+
+    // Si une erreur survient → on renvoie vers le bon dashboard selon le rôle
+    if (role === "DIRECTOR") {
+      return res.render("pages/dashboardDirector.twig", {
+        title: "Tableau de bord",
+        err: "Erreur lors de la déconnexion",
+      });
+    }
+    if (role === "PROFESSOR") {
+      return res.render("pages/dashboardProfessor.twig", {
+        title: "Tableau de bord",
+        err: "Erreur lors de la déconnexion",
+      });
+    }
+
+    //Si aucun rôle n'est trouvé
+    return res.redirect("/login");
+  });
 }
