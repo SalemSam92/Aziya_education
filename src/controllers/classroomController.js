@@ -59,13 +59,14 @@ export async function affectProfessorToClassroom(req, res) {
   }
 
   try {
+     // Vérifie si le professeur possède déjà une classe
     const professorHasClass = await nbClassroomByProfessor(Number(professor));
 
     if (professorHasClass >= 1 && !confirm) {
       //Si le prof possède déjà une classe ou plus et que le confirm n'existe pas (form du dashboard)=> redirection modal
 
       return res.render("pages/dashboardDirector.twig", {
-        confirmAffectation: true,
+        confirmAffectation: true, // Indique à la vue d'afficher le modal de confirmation : le true = modal visible 
         professor,
         classroom,
       });

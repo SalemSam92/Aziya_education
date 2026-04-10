@@ -88,8 +88,8 @@ button:hover {
   justify-content: center;
   align-items: center;
 }
-#close{
-  width: 95%;
+#close,#close-modal-profWithClassroom{
+  width: 90%;
   margin: 10px auto;
   padding: 10px;
   background: #c62828;
@@ -99,7 +99,7 @@ button:hover {
   cursor: pointer;
   font-size: 15px;
 }
-#close:hover {
+#close:hover,#close-modal-profWithClassroom:hover {
   background: #af1717;
   transition: 0.9s;
 }
@@ -116,8 +116,8 @@ button:hover {
 }
 
 .messSucces {
-  background-color: #41b179b7;
-  color: #0a0a0ae3;
+  background-color: #35895f;
+  color: white;
   padding: 10px;
   border-radius: 7px;
   text-align: center;

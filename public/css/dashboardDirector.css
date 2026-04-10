@@ -125,7 +125,7 @@ a:hover {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 label {
   font-size: 12px;
@@ -141,18 +141,10 @@ label {
   cursor: pointer;
   font-size: 12px;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
 }
-#btn-affect-professor:hover,#btn-affect-classroom:hover {
-  background: #44b37b;
-  transition: 0.9s;
-}
-.link-affect {
-  margin: 20px;
-}
-.link-affect a {
-  margin-left: 90px;
-  width: 50%;
+#btn-professorWithClassroom {
+  width: 100%;
   padding: 10px;
   background: #35895f;
   color: white;
@@ -161,13 +153,14 @@ label {
   cursor: pointer;
   font-size: 12px;
   text-align: center;
+  margin-bottom: -8px;
 }
-.link-affect a:hover {
+#btn-affect-professor:hover,
+#btn-affect-classroom:hover,
+#btn-professorWithClassroom:hover {
   background: #44b37b;
   transition: 0.9s;
-  text-decoration: none;
 }
-
 .modal-professor {
   position: fixed;
   inset: 0; /* Equivalent de top, left */
@@ -195,6 +188,15 @@ label {
   justify-content: center;
   align-items: center;
 }
+.modal-profwithclassroom {
+  position: fixed;
+  inset: 0; /* Equivalent de top, left */
+  background-color: rgb(0, 0, 0, 0.6);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 .modal-container {
   background-color: white;
@@ -202,8 +204,8 @@ label {
   border-radius: 8px;
 }
 .messSucces {
-  background-color: #41b179b7;
-  color: #0a0a0ae3;
+  background-color: #35895f;
+  color: white;
   padding: 10px;
   border-radius: 7px;
   text-align: center;

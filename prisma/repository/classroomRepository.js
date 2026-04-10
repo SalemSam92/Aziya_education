@@ -76,6 +76,16 @@ export async function classroomWithProfessor(school_id) {
   });
 }
 
+export async function deleteAffectationProf(id,professor_id){
+  return await prisma.classroom.update({
+    where :{id :id},
+    data :{
+      user : {disconnect : {id : professor_id}}
+    }
+  
+  })
+}
+
 export async function countStudent(school_id) {
   return await prisma.classroom.count({
     where: { school_id: school_id },

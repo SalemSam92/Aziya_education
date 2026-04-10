@@ -19,6 +19,7 @@ import {
 } from "../../prisma/repository/userRepository.js";
 import {
   classroomWithProfessor,
+  deleteAffectationProf,
   nbClassroom,
   nbStudentMaxByClassroom,
   selectClassroom,
@@ -231,7 +232,9 @@ export async function getDashboardDirector(req, res) {
     const capaciteMaxClassroom = await nbStudentMaxByClassroom(
       req.session.user.school_id,
     );
-    // const professorWithClassroom = await classroomWithProfessor(req.session.user.school_id,);
+    const professorWithClassroom = await classroomWithProfessor(
+      req.session.user.school_id,
+    );
 
     //faire sessionError et sessionSuccès
     const errorAdd = req.session.errorAdd;
@@ -245,6 +248,7 @@ export async function getDashboardDirector(req, res) {
       user: req.session.user,
       professors,
       classrooms,
+      professorWithClassroom,
       totalProfessor,
       totalStudent,
       totalClassroom,
@@ -345,11 +349,26 @@ export async function deleteProf(req, res) {
   }
 }
 
+export async function deleteAffectProf(req,res) {
+  const {classroom,professor} = req.body
+  const {professor_id} = req.params
+  console.log(req.body);
+  
+  
+  try {
+    await deleteAffectationProf(Number(classroom),Number(professor),Number(professor_id))
+    req.session.succes = "Affectation supprimée"
+    res.redirect("/dashboardDirector");
+  } catch (error) {
+     console.log(error);
+  }
+}
+
 export async function getDashboarProfessor(req, res) {
   try {
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
-      user: req.session.user
+      user: req.session.user,
     });
   } catch (error) {
     console.log(error);

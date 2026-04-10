@@ -56,14 +56,12 @@ input {
   transition: 0.9s;
 }
 
-
 #close-modal-professor:hover,
 #close-modal-classroom:hover,
-#close-modal-student:hover {
+#close-modal-student:hover{
   background: #af1717;
   transition: 0.9s;
 }
-
 
 .messError {
   background-color: rgba(255, 0, 0, 0.699);
@@ -74,4 +72,3 @@ input {
   font-size: 13px;
   font-weight: bolder;
 }
-

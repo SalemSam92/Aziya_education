@@ -1,7 +1,10 @@
-footer {
+.footer {
   text-align: center;
   padding: 24px;
   font-size: 14px;
   color: #777;
-  margin-top: 22px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
