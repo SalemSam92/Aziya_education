@@ -83,6 +83,7 @@ export async function nbStudentClassroom(school_id) {
   });
 }
 
+
 export async function postUpdateStudent(id,lastname,firstname,birthday,classroom_id){
   return await prisma.student.update({
     data :{
@@ -107,4 +108,48 @@ export async function deleteStudent(id) {
   return await prisma.student.delete({
     where: { id: id },
   });
+}
+
+
+// Afficher la liste des élèves dans la modal du dashboardProfessor et pour gerer l'update de l'imputation dans le get grâce à "imputations : true"
+export async function selectStudentByClassroom(classroom_id) {
+const today = new Date();
+
+// Début de journée
+const startOfDay = new Date(today);
+startOfDay.setHours(0, 0, 0, 0);
+
+// Fin de journée
+const endOfDay = new Date(today);
+endOfDay.setHours(23, 59, 59, 999);
+
+  return await prisma.student.findMany({
+    select: {
+      id: true,
+      lastname: true,
+      firstname: true,
+      birthday: true,
+      classroom: true,
+      // Récupération UNIQUEMENT l’imputation du jour
+      imputations : {
+        where :{
+          dateTime : {
+            gte : startOfDay,
+            lte : endOfDay
+          }
+        }
+      }
+    },
+    where: {
+      classroom_id: Number(classroom_id),
+    },
+    orderBy: { lastname: "asc" },
+  });
+}
+
+// Pour gerer l'update de l'imputation dans le get (controller)
+export async function selectStudentById(id) {
+  return await prisma.student.findUnique({
+    where : {id : id}
+  })
 }

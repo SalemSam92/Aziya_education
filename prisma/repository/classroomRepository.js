@@ -73,6 +73,18 @@ export async function classroomWithProfessor(school_id) {
     where: {
       school_id: school_id,
     },
+    orderBy : {name : "asc"}
+  });
+}
+export async function classroom(professor_id) {
+  return await prisma.classroom.findMany({
+    include: {
+      user: true,
+    },
+    where: {
+      professor_id: professor_id,
+    },
+    orderBy : {name : "desc"}
   });
 }
 

@@ -18,6 +18,7 @@ import {
   selectProfessor,
 } from "../../prisma/repository/userRepository.js";
 import {
+  classroom,
   classroomWithProfessor,
   deleteAffectationProf,
   nbClassroom,
@@ -26,7 +27,9 @@ import {
 } from "../../prisma/repository/classroomRepository.js";
 import {
   nbStudent,
+  nbStudentClassroom,
   selectStudent,
+  selectStudentByClassroom,
   studentAddClassroom,
 } from "../../prisma/repository/studentRepository.js";
 
@@ -349,26 +352,69 @@ export async function deleteProf(req, res) {
   }
 }
 
-export async function deleteAffectProf(req,res) {
-  const {classroom,professor} = req.body
-  const {professor_id} = req.params
+export async function deleteAffectProf(req, res) {
+  const { classroom, professor } = req.body;
+  const { professor_id } = req.params;
   console.log(req.body);
-  
-  
+
   try {
-    await deleteAffectationProf(Number(classroom),Number(professor),Number(professor_id))
-    req.session.succes = "Affectation supprimée"
+    await deleteAffectationProf(
+      Number(classroom),
+      Number(professor),
+      Number(professor_id),
+    );
+    req.session.succes = "Affectation supprimée";
     res.redirect("/dashboardDirector");
   } catch (error) {
-     console.log(error);
+    console.log(error);
   }
 }
 
 export async function getDashboarProfessor(req, res) {
   try {
+    const professorWithClassroom = await classroomWithProfessor(
+      req.session.user.school_id,
+    );
+
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
       user: req.session.user,
+      professorWithClassroom,
+      modal: false,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Afficher modal avec liste des elèves par classe dans le dashboardProfessor
+export async function postListStudentByProfessor(req, res) {
+  const { classroom_id } = req.body;
+
+  if (!classroom_id) {
+    req.session.errorSelect = "Veuillez selectionner une classe";
+  }
+    const errorSelect = req.session.errorSelect;
+  req.session.errorSelect = null;
+
+  try {
+    const professorWithClassroom = await classroomWithProfessor(
+      req.session.user.school_id,
+    );
+    const students = await selectStudentByClassroom(Number(classroom_id));
+    const nbStudentByClassroom = await nbStudentClassroom(
+      req.session.user.school_id,
+    );
+
+    res.render("pages/dashboardProfessor.twig", {
+      title: "Tableau de bord",
+      user: req.session.user,
+      professorWithClassroom,
+      students,
+      nbStudentByClassroom,
+      modal: true,
+      selectedClassroom: classroom_id,
+      errorSelect,
     });
   } catch (error) {
     console.log(error);

@@ -1,0 +1,111 @@
+<div class="box">
+	<div class="table-container">
+		<h2>Liste des élèves</h2>
+
+		<h3>
+			{% for nb in nbStudentByClassroom %}
+				{% if selectedClassroom == nb.classroom_id %}
+					<p>Nombre d'élève :
+						{{ nb._count.id }}</p>
+				{% endif %}
+			{% endfor %}
+		</h3>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>Date de naissance</th>
+					<th>Présent</th>
+					<th>Absent</th>
+					<th>Modifier</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for student in students %}
+					<tr>
+						<td>{{ student.lastname }}</td>
+						<td>{{ student.firstname }}</td>
+						<td>{{ student.birthday|date("d-m-Y") }}</td>
+
+						{# ===================== PRÉSENT ===================== #}
+						<td>
+							{% if student.imputations|length > 0 %}
+
+								{% if updateImputation and updateImputation.student_id == student.id %}
+									{# MODE UPDATE → réafficher les boutons #}
+									<form action="/imputation/update/{{ updateImputation.id }}" method="post">
+										<input type="hidden" name="imputation" value="true">
+										<input type="hidden" name="classroom_id" value="{{ selectedClassroom }}">
+										<button id="isPresent">Présent</button>
+									</form>
+
+								{% else %}
+									{# MODE LECTURE → afficher texte #}
+									{% if student.imputations[0].isPresent %}
+										<p style="font-size:20px;">✅</p>
+
+									{% else %}
+										<p>-</p>
+									{% endif %}
+								{% endif %}
+
+							{% else %}
+								{# MODE CREATION #}
+								<form action="/imputation" method="post">
+									<input type="hidden" name="imputation" value="true">
+									<input type="hidden" name="student_id" value="{{ student.id }}">
+									<input type="hidden" name="classroom_id" value="{{ selectedClassroom }}">
+									<button id="isPresent">Présent</button>
+								</form>
+							{% endif %}
+						</td>
+
+						{# ===================== ABSENT ===================== #}
+						<td>
+							{% if student.imputations|length > 0 %}
+
+								{% if updateImputation and updateImputation.student_id == student.id %}
+									<form action="/imputation/update/{{ updateImputation.id }}" method="post">
+										<input type="hidden" name="imputation" value="false">
+										<input type="hidden" name="classroom_id" value="{{ selectedClassroom }}">
+										<button id="isAbsent">Absent</button>
+									</form>
+
+								{% else %}
+									{% if not student.imputations[0].isPresent %}
+										<p style="font-size:20px;">❌</p>
+									{% else %}
+										<p>-</p>
+									{% endif %}
+								{% endif %}
+
+							{% else %}
+								<form action="/imputation" method="post">
+									<input type="hidden" name="imputation" value="">
+									<input type="hidden" name="student_id" value="{{ student.id }}">
+									<input type="hidden" name="classroom_id" value="{{ selectedClassroom }}">
+									<button id="isAbsent">Absent</button>
+								</form>
+							{% endif %}
+						</td>
+
+						{# ===================== MODIFIER ===================== #}
+						<td>
+							{% if student.imputations|length > 0 %}
+								<form action="/imputation/update/{{ student.imputations[0].id }}" method="get">
+									<button>Modifier</button>
+								</form>
+							{% endif %}
+						</td>
+
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<button type="button" id="close">Fermer</button>
+	</div>
+</div>

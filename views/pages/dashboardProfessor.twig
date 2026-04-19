@@ -1,17 +1,72 @@
 {% extends "../layouts/base.twig" %}
 {% block style %}
-	<link rel="stylesheet" href="css/headerDashboard.css">
-	<link rel="stylesheet" href="css/dashboardDirector.css">
-	<link rel="stylesheet" href="css/footer.css">
+	<link rel="stylesheet" href="/css/headerDashboard.css">
+	<link rel="stylesheet" href="/css/dashboardDirector.css">
+	<link rel="stylesheet" href="/css/table.css">
 {% endblock %}
 
 {% block header %}
 	{% include "../partials/headerDashboard.twig" %}
 {% endblock %}
 {% block main %}
-	
-	<p>Bonjour
-		{{user.lastname}}
-		{{user.firstname}}
-	</p>
-{% endblock %}
+	<div class="container">
+		<div class="sideBar">
+
+
+			<p class="nameUser">Bonjour
+				{{user.lastname}}
+				{{user.firstname}}</p>
+
+			<p class="nameSchool">Etablissement:
+				{{user.school.name}}
+			</p>
+			<p class="info">
+				<b>Professeur de la classe :</b>
+				{% for classroom in professorWithClassroom %}
+					{% if classroom.professor_id == user.id %}
+						<b>{{classroom.name}}</b><br>
+
+					{% endif %}
+				{% endfor %}
+			</p>
+			<p></p>
+
+		</div>
+
+		<div class="center">
+			<h2>Liste des élèves</h2>
+			<p>Cliquez sur le bouton ci-dessous pour choisir la classe et afficher la liste des élèves</p>
+
+
+			<form action="/dashboardProfessor" method="post">
+
+				<select name="classroom_id" id="">
+					<option value="">----Choisir une classe----</option>
+					{% for classroom in professorWithClassroom %}
+						{% if classroom.professor_id == user.id  %}
+							<option value="{{classroom.id}}">
+								{{classroom.name}}
+							</option>
+						{% endif %}
+					{% endfor %}
+
+				</select>
+				<div>
+					<button type="submit" id="btn-choice-classroom">Valider</button>
+				</div>
+
+			</div>
+
+		</form>
+		{% if modal %}
+			<div class="modal-list-student" id="modal-list-student">
+				<div class="modal-container">
+					{% include "../pages/modalListStudent.twig" %}
+				</div>
+			</div>
+		{% endif %}
+
+		{% block script %}
+			<script src="/scripts/modalDashboardProfessor.js"></script>
+		{% endblock %}
+	{% endblock %}

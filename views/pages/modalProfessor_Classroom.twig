@@ -4,43 +4,43 @@
 {% endblock %}
 
 {% block main %}
+	<div class="box">
+		<div class="table-container">
+			<h2>Liste des professeurs</h2>
+			<p>Gérer les professeurs avec leur classes d'affectation en toute simplicité
+			</p>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Nom</th>
+						<th>Prénom</th>
+						<th>Classes</th>
+						<th>Retirer affectation</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for classroom in professorWithClassroom %}
+						{% if classroom.professor_id %}
+							<tr>
+								<td>{{classroom.user.lastname}}</td>
+								<td>{{classroom.user.firstname}}</td>
+								<td>{{classroom.name}}</td>
+								<td>
+									<form action="/dashboardDirector/{{classroom.user.id}}/deleteAffectation" method="post">
+										<input type="hidden" name="classroom" value="{{classroom.id}}">
+										<input type="hidden" name="professor" value="{{classroom.user.id}}">
+										<button type="submit" class="btn-delete">Retirer affectation</button>
+									</form>
+								</td>
+							</tr>
+						{% endif %}
 
-	<div class="table-container">
-		<h2>Liste des professeurs</h2>
-		<p>Gérer les professeurs avec leur classes d'affectation en toute simplicité
-		</p>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Nom</th>
-					<th>Prénom</th>
-					<th>Classes</th>
-					<th>Retirer affectation</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for classroom in professorWithClassroom %}
-					{% if classroom.professor_id %}
-						<tr>
-							<td>{{classroom.user.lastname}}</td>
-							<td>{{classroom.user.firstname}}</td>
-							<td>{{classroom.name}}</td>
-							<td>
-								<form action="/dashboardDirector/{{classroom.user.id}}/deleteAffectation" method="post">
-									<input type="hidden" name="classroom" value="{{classroom.id}}">
-									<input type="hidden" name="professor" value="{{classroom.user.id}}">
-									<button type="submit" class="btn-delete">Retirer affectation</button>
-								</form>
-							</td>
-						</tr>
-					{% endif %}
 
-
-				{% endfor %}
-			</tbody>
-		</table>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
 	</div>
-
 	<button type="submit" id="close-modal-profWithClassroom">Fermer</button>
 
 {% endblock %}

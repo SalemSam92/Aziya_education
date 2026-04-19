@@ -1,4 +1,4 @@
-.box {
+.box-formAdd {
   background: #ffffff;
   width: 300px;
   margin: 20px auto;
@@ -58,7 +58,7 @@ input {
 
 #close-modal-professor:hover,
 #close-modal-classroom:hover,
-#close-modal-student:hover{
+#close-modal-student:hover {
   background: #af1717;
   transition: 0.9s;
 }

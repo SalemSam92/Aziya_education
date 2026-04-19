@@ -1,3 +1,12 @@
+.box {
+  background: #ffffff;
+  width: 600px;
+  margin: 20px auto;
+  margin-bottom: 0;
+  padding: 30px;
+  border-radius: 8px;
+  /* box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); */
+}
 .table-container {
   background: white;
   padding: 20px;
@@ -49,12 +58,19 @@ button:hover {
   border: 2px solid #896519;
   cursor: pointer;
 }
-.btn-validate {
+
+.btn-validate,#isPresent {
   background-color: #35895f;
   border: 2px solid #35895f;
 }
 
-.btn-delete {
+.btn-validate:hover,#isPresent:hover {
+  background-color: #44b37b;
+  border: 2px solid #44b37b;
+}
+
+.btn-delete,
+#close,#isAbsent {
   border: 2px solid #c62828;
   background-color: #c62828;
   color: white;
@@ -62,18 +78,19 @@ button:hover {
   transition: 0.2s;
   padding: 8px;
 }
-.btn-delete:hover {
+.btn-delete:hover,
+#isAbsent:hover {
   background: #af1717;
   color: white;
   transition: 0.9s;
   border: 2px solid #af1717;
   cursor: pointer;
 }
-.buttons{
+.buttons {
   background-color: #35895f;
   border: 2px solid #35895f;
 }
-.buttons:hover{
+.buttons:hover {
   background-color: #35895f;
   border: 2px solid #35895f;
 }
@@ -88,8 +105,9 @@ button:hover {
   justify-content: center;
   align-items: center;
 }
-#close,#close-modal-profWithClassroom{
-  width: 90%;
+#close,
+#close-modal-profWithClassroom {
+  width: 98%;
   margin: 10px auto;
   padding: 10px;
   background: #c62828;
@@ -99,7 +117,8 @@ button:hover {
   cursor: pointer;
   font-size: 15px;
 }
-#close:hover,#close-modal-profWithClassroom:hover {
+#close:hover,
+#close-modal-profWithClassroom:hover {
   background: #af1717;
   transition: 0.9s;
 }

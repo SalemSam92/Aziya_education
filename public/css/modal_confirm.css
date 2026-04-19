@@ -44,6 +44,11 @@ p {
   cursor: pointer;
   font-size: 15px;
 }
+.exit:hover{
+  background: #af1717;
+  transition: 0.9s;
+    border: 2px solid #af1717;
+}
 
 .modal-confirm {
   position: fixed;

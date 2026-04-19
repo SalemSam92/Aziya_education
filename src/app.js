@@ -4,6 +4,7 @@ import session from "express-session"
 import { userRouter } from "./routes/userRouter.js"
 import { studentRouter } from "./routes/studentRouter.js"
 import { classroomRouter } from "./routes/classroom.Router.js"
+import { imputationRouter } from "./routes/imputationRouter.js"
 
 
 
@@ -21,6 +22,7 @@ app.use(session({
 app.use(userRouter)
 app.use(classroomRouter)
 app.use(studentRouter)
+app.use(imputationRouter)
 
 app.listen(process.env.PORT,(error)=>{
     error ? console.log(error) : console.log("serveur start");
