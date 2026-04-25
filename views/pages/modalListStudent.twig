@@ -3,10 +3,10 @@
 		<h2>Liste des élèves</h2>
 
 		<h3>
-			{% for nb in nbStudentByClassroom %}
-				{% if selectedClassroom == nb.classroom_id %}
+			{% for nbStud in nbStudentByClassroom %}
+				{% if selectedClassroom == nbStud.classroom_id %}
 					<p>Nombre d'élève :
-						{{ nb._count.id }}</p>
+						{{ nbStud._count.id }}</p>
 				{% endif %}
 			{% endfor %}
 		</h3>
@@ -24,6 +24,11 @@
 			</thead>
 
 			<tbody>
+				{% if errorSelect %}
+					<div class="messError">
+						{{errorSelect}}
+					</div>
+				{% endif %}
 				{% for student in students %}
 					<tr>
 						<td>{{ student.lastname }}</td>
@@ -32,12 +37,12 @@
 
 						{# ===================== PRÉSENT ===================== #}
 						<td>
+							{# S'il y a une imputation aujourd’hui (Tableau dans student rempli) #}
 							{% if student.imputations|length > 0 %}
-
 								{% if updateImputation and updateImputation.student_id == student.id %}
+									{# Si le professeur a cliqué sur "modifier" et si l'imputation de l'élève en modification est l'élève affiché dans la ligne du tableau #}
 									{# MODE UPDATE → réafficher les boutons #}
-									<form action="/imputation/update/{{ updateImputation.id }}" method="post">
-										<input type="hidden" name="imputation" value="true">
+										<form action="/imputation/update/{{ updateImputation.id }}" method="post"> <input type="hidden" name="imputation" value="true">
 										<input type="hidden" name="classroom_id" value="{{ selectedClassroom }}">
 										<button id="isPresent">Présent</button>
 									</form>
@@ -52,6 +57,7 @@
 									{% endif %}
 								{% endif %}
 
+								{# S'il n' y a pas d'imputation aujourd’hui (Tableau dans student vide) #}
 							{% else %}
 								{# MODE CREATION #}
 								<form action="/imputation" method="post">
@@ -65,9 +71,11 @@
 
 						{# ===================== ABSENT ===================== #}
 						<td>
+							{# S'il y a une imputation aujourd’hui (Tableau dans student rempli) #}
 							{% if student.imputations|length > 0 %}
 
 								{% if updateImputation and updateImputation.student_id == student.id %}
+									{# Si le professeur a cliqué sur "modifier" et si l'imputation de l'élève en modification est l'élève affiché dans la ligne du tableau #}
 									<form action="/imputation/update/{{ updateImputation.id }}" method="post">
 										<input type="hidden" name="imputation" value="false">
 										<input type="hidden" name="classroom_id" value="{{ selectedClassroom }}">
@@ -82,7 +90,9 @@
 									{% endif %}
 								{% endif %}
 
+								{# S'll n' y a pas d'imputation aujourd’hui (Tableau dans student vide) #}
 							{% else %}
+							{# MODE CREATION #}
 								<form action="/imputation" method="post">
 									<input type="hidden" name="imputation" value="">
 									<input type="hidden" name="student_id" value="{{ student.id }}">

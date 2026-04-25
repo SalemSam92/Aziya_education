@@ -24,14 +24,20 @@ import {
   nbClassroom,
   nbStudentMaxByClassroom,
   selectClassroom,
+  studentsByProfessor,
 } from "../../prisma/repository/classroomRepository.js";
 import {
   nbStudent,
   nbStudentClassroom,
   selectStudent,
   selectStudentByClassroom,
+  selectStudentById,
   studentAddClassroom,
 } from "../../prisma/repository/studentRepository.js";
+import {
+  imputationByStudent,
+  listImputationsByStudent,
+} from "../../prisma/repository/imputationRepository.js";
 
 export async function getLandingPage(req, res) {
   try {
@@ -372,15 +378,27 @@ export async function deleteAffectProf(req, res) {
 
 export async function getDashboarProfessor(req, res) {
   try {
+    const student = await selectStudent(req.session.user.school_id);
+    let id;
+    student.forEach((eleve) => {
+      id = eleve.id;
+    });
     const professorWithClassroom = await classroomWithProfessor(
       req.session.user.school_id,
     );
+    const listStudentByProfessor = await studentsByProfessor(
+      req.session.userId,
+    );
+    const studentId = await selectStudentById(Number(id));
 
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
       user: req.session.user,
       professorWithClassroom,
+      listStudentByProfessor,
+      studentId,
       modal: false,
+      modalCalendar: false,
     });
   } catch (error) {
     console.log(error);
@@ -394,7 +412,7 @@ export async function postListStudentByProfessor(req, res) {
   if (!classroom_id) {
     req.session.errorSelect = "Veuillez selectionner une classe";
   }
-    const errorSelect = req.session.errorSelect;
+  const errorSelect = req.session.errorSelect;
   req.session.errorSelect = null;
 
   try {
@@ -405,6 +423,9 @@ export async function postListStudentByProfessor(req, res) {
     const nbStudentByClassroom = await nbStudentClassroom(
       req.session.user.school_id,
     );
+    const listStudentByProfessor = await studentsByProfessor(
+      req.session.userId,
+    );
 
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
@@ -412,10 +433,63 @@ export async function postListStudentByProfessor(req, res) {
       professorWithClassroom,
       students,
       nbStudentByClassroom,
-      modal: true,
-      selectedClassroom: classroom_id,
+      listStudentByProfessor,
       errorSelect,
+      modal: true,
+      modalCalendar: false,
+      selectedClassroom: classroom_id,
     });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function postCalendar(req, res) {
+  const { student_id } = req.body;
+  const { student } = req.params;
+
+  if (!student_id) {
+    req.session.errorSelect = "Veuillez sélectionner un élève"
+  }
+  const errorSelect = req.session.errorSelect;
+  req.session.errorSelect = null;
+  try {
+    const professorWithClassroom = await classroomWithProfessor(
+      req.session.user.school_id,
+    );
+    // const students = await selectStudentByClassroom(Number(classroom_id));
+    const nbStudentByClassroom = await nbStudentClassroom(
+      req.session.user.school_id,
+    );
+    const studentId = await selectStudentById(Number(student_id));
+
+    res.render("pages/dashboardProfessor.twig", {
+      title: "Tableau de bord",
+      user: req.session.user,
+      professorWithClassroom,
+      studentId,
+      nbStudentByClassroom,
+      errorSelect,
+      modalCalendar: true,
+      modal: false,
+     
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getCalendar(req, res) {
+  const { student_id } = req.params;
+  try {
+    const imputations = await listImputationsByStudent(Number(student_id));
+    const events = imputations.map((imputation) => ({    // .map() transforme tes imputations en événements FullCalendar.
+      title: imputation.isPresent ? "Présent" : "Absent",   // Si l'élève est présent, affiche "Présent", sinon affiche "Absent".
+      color: imputation.isPresent ? "green" : "red", // Met l'événement en vert si présent, en rouge si absent.
+      start: imputation.dateTime.toISOString().split("T")[0], // toISOString().split("T")[0] sert à convertir la date en YYYY-MM-DD pour FullCalendar
+    }));
+
+    res.json(events);
   } catch (error) {
     console.log(error);
   }

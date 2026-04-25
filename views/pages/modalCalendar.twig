@@ -1,0 +1,16 @@
+<div class="box">
+	<div class="table-container">
+		<h2>Calendrier d'absence de :</h2>
+		<p>{{studentId.lastname}}
+			{{studentId.firstname}}</p>
+		{% if errorSelect %}
+			<div class="messError">
+				{{errorSelect}}
+			</div>
+		{% endif %}
+
+		<div id="calendar" data-student="{{ studentId.id }}"></div>
+
+	</div>
+	<button type="button" id="close">Fermer</button>
+</div>

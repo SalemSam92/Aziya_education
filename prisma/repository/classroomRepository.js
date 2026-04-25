@@ -134,3 +134,16 @@ export async function deleteAffectation(id, student_id) {
     },
   });
 }
+
+//Fonction pour récupérer tous les élèves d'un professeur pour le dashboardProfessor
+export async function studentsByProfessor(professor_id){
+  return await prisma.classroom.findMany({
+    where : {professor_id : professor_id },
+    select : {
+      student : {
+        orderBy : [{lastname :"asc"},{firstname :"asc"}]
+        
+      },
+    },
+  })
+}

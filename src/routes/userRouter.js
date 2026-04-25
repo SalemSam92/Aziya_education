@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteAffectProf, deleteProf, getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, getUpdate, logout, postCreateProfessor, postListStudentByProfessor, postLogin, postRegisterDirector, postUpdate } from "../controllers/userController.js"
+import { deleteAffectProf, deleteProf, getCalendar, getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, getUpdate, logout, postCalendar, postCreateProfessor, postListStudentByProfessor, postLogin, postRegisterDirector, postUpdate } from "../controllers/userController.js"
 import { getRoleLogin } from "../services/RoleAurthguard.js"
 import { authguard } from "../services/authguardUser.js"
 import { verifieRoleDirector } from "../services/directorOnly.js"
@@ -33,6 +33,10 @@ userRouter.post("/dashboardDirector/:professor_id/deleteAffectation",authguard,v
 //Gestion Accès tableau de bord (Professeur)
 userRouter.get("/dashboardProfessor",authguard, verifieRolePorfessor,getDashboarProfessor)
 userRouter.post("/dashboardProfessor",authguard,verifieRolePorfessor,postListStudentByProfessor)
+userRouter.post("/dashboardProfessor/:student",authguard,verifieRolePorfessor,postCalendar)
+// Route pour FullCalendar
+userRouter.get("/calendar/:student_id",authguard,verifieRolePorfessor,getCalendar)
+
 
 
 //Route logout

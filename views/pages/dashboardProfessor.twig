@@ -3,6 +3,8 @@
 	<link rel="stylesheet" href="/css/headerDashboard.css">
 	<link rel="stylesheet" href="/css/dashboardDirector.css">
 	<link rel="stylesheet" href="/css/table.css">
+	<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet"/>
+
 {% endblock %}
 
 {% block header %}
@@ -54,10 +56,32 @@
 				<div>
 					<button type="submit" id="btn-choice-classroom">Valider</button>
 				</div>
+			</form>
+			<p>Cliquez sur le bouton ci-dessous pour accéder à l'historique d'absence par élève</p>
 
-			</div>
+			<form action="/dashboardProfessor/{{studentId.id}}" method="post">
 
-		</form>
+				<select name="student_id" id="">
+					<option value="">----Choisir un élève----</option>
+					{% for classroom in listStudentByProfessor %}
+						{# listStudentByProfessor = liste de classes et classroom = une classe #}
+						{% for student in classroom.student %}
+							{# classroom.student = liste d'élèves #}
+							<option value="{{student.id}}">
+								{{student.lastname}}
+								{{student.firstname}}
+							</option>
+						{% endfor %}
+					{% endfor %}
+				</select>
+				<div>
+					<button type="submit" id="btn-choice-student">Valider</button>
+				</div>
+
+			</form>
+		</div>
+	
+
 		{% if modal %}
 			<div class="modal-list-student" id="modal-list-student">
 				<div class="modal-container">
@@ -65,8 +89,21 @@
 				</div>
 			</div>
 		{% endif %}
+		{% if modalCalendar %}
+			<div class="modal-list-student" id="">
+				<div class="modal-container">
+					{% include "../pages/modalCalendar.twig" %}
+				</div>
+			</div>
+		{% endif %}
+
+		
+
 
 		{% block script %}
 			<script src="/scripts/modalDashboardProfessor.js"></script>
+			<script src="/scripts/calendar.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/fr.global.min.js"></script>
 		{% endblock %}
 	{% endblock %}

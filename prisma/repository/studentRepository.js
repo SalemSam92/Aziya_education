@@ -147,7 +147,7 @@ endOfDay.setHours(23, 59, 59, 999);
   });
 }
 
-// Pour gerer l'update de l'imputation dans le get (controller)
+// Pour gerer l'update de l'imputation dans le get (controller) et récupérer un élève 
 export async function selectStudentById(id) {
   return await prisma.student.findUnique({
     where : {id : id}
