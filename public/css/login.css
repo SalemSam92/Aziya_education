@@ -89,6 +89,17 @@ a:hover {
   font-size: 13px;
   font-weight: bolder;
 }
+.messSucces {
+  background-color: #35895f;
+  color: white;
+  padding: 10px;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bolder;
+  width: 90%;
+  margin-top: 10px;
+}
 @media screen and (max-width: 420px) {
   .box {
     width: 250px;

@@ -8,6 +8,7 @@ import {
   siretRegex,
 } from "../services/regexDirector.js";
 import {
+  ChangePassword,
   createProfessor,
   deleteProfessor,
   getUpdateProfessor,
@@ -170,6 +171,58 @@ export async function postLogin(req, res, next) {
     res.render("pages/login.twig", {
       title: "Connexion",
       errorLogin: "Identifiants invalide",
+    });
+  }
+}
+
+//Affichage de la page ChangePassword
+export async function getChangePassword(req, res) {
+  try {
+    res.render("pages/changePassword.twig", {
+      title: "Mot de passe oublié",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Création de nouveau mot de passe
+export async function postChangePassword(req, res) {
+  const { mail, password } = req.body;
+
+  if (!mailRegex.test(mail) || !mail) {
+    return res.render("pages/changePassword.twig", {
+      title: "Mot de passe oublié",
+      errorNewPassword: "Identifiants invalide",
+    });
+  }
+
+  if (!passwordRegex.test(password) || !password) {
+    return res.render("pages/changePassword.twig", {
+      title: "Mot de passe oublié",
+      errorNewPassword: "Identifiants invalide",
+    });
+  }
+
+  try {
+    const user = await login(mail);
+    if (!user) {
+      throw new Error("Utilisateur introuvable");
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    await ChangePassword(mail, passwordHash);
+    res.render("pages/changePassword.twig",{
+      title : "Mot de passe oublié",
+      succesChangePassword : "Votre mot de passe a été modifié avec succès."
+    });
+  } catch (error) {
+    console.log(error);
+      console.log(error.message);
+    res.render("pages/changePassword.twig", {
+      title: "Mot de passe oublié",
+      errorNewPassword: "Identifiants invalide",
     });
   }
 }
@@ -449,7 +502,7 @@ export async function postCalendar(req, res) {
   const { student } = req.params;
 
   if (!student_id) {
-    req.session.errorSelect = "Veuillez sélectionner un élève"
+    req.session.errorSelect = "Veuillez sélectionner un élève";
   }
   const errorSelect = req.session.errorSelect;
   req.session.errorSelect = null;
@@ -472,7 +525,6 @@ export async function postCalendar(req, res) {
       errorSelect,
       modalCalendar: true,
       modal: false,
-     
     });
   } catch (error) {
     console.log(error);
@@ -483,8 +535,9 @@ export async function getCalendar(req, res) {
   const { student_id } = req.params;
   try {
     const imputations = await listImputationsByStudent(Number(student_id));
-    const events = imputations.map((imputation) => ({    // .map() transforme tes imputations en événements FullCalendar.
-      title: imputation.isPresent ? "Présent" : "Absent",   // Si l'élève est présent, affiche "Présent", sinon affiche "Absent".
+    const events = imputations.map((imputation) => ({
+      // .map() transforme tes imputations en événements FullCalendar.
+      title: imputation.isPresent ? "Présent" : "Absent", // Si l'élève est présent, affiche "Présent", sinon affiche "Absent".
       color: imputation.isPresent ? "green" : "red", // Met l'événement en vert si présent, en rouge si absent.
       start: imputation.dateTime.toISOString().split("T")[0], // toISOString().split("T")[0] sert à convertir la date en YYYY-MM-DD pour FullCalendar
     }));

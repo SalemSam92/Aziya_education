@@ -36,6 +36,13 @@ export async function login(mail) {
   });
 }
 
+export async function ChangePassword(mail,password){
+  return await prisma.user.update({
+    where : {mail : mail},
+    data : {password}
+  })
+}
+
 export async function createProfessor(
   lastname,
   firstname,

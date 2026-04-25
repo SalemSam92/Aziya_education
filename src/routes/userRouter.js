@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteAffectProf, deleteProf, getCalendar, getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, getUpdate, logout, postCalendar, postCreateProfessor, postListStudentByProfessor, postLogin, postRegisterDirector, postUpdate } from "../controllers/userController.js"
+import { deleteAffectProf, deleteProf, getCalendar, getChangePassword, getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, getUpdate, logout, postCalendar, postChangePassword, postCreateProfessor, postListStudentByProfessor, postLogin, postRegisterDirector, postUpdate } from "../controllers/userController.js"
 import { getRoleLogin } from "../services/RoleAurthguard.js"
 import { authguard } from "../services/authguardUser.js"
 import { verifieRoleDirector } from "../services/directorOnly.js"
@@ -19,6 +19,10 @@ userRouter.post("/register",postRegisterDirector)
 //Gestion connexion directeur/professeur
 userRouter.get("/login",getLogin)
 userRouter.post("/login",postLogin,getRoleLogin)
+
+//Gestion mot de passe oublié
+userRouter.get("/changePassword",getChangePassword)
+userRouter.post("/changePassword",postChangePassword)
 
 
 //Gestion tableau de bord (Directeur)
