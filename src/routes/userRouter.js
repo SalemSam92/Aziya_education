@@ -1,9 +1,9 @@
 import express from "express"
-import { deleteAffectProf, deleteProf, getCalendar, getChangePassword, getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getRegisterDirector, getUpdate, logout, postCalendar, postChangePassword, postCreateProfessor, postListStudentByProfessor, postLogin, postRegisterDirector, postUpdate } from "../controllers/userController.js"
+import { deleteAffectProf, deleteProf, getCalendar, getChangePassword, getContact, getDashboardDirector, getDashboarProfessor, getLandingPage, getLogin, getManagementProfessor, getNewPassword, getRegisterDirector, getUpdate, logout, postCalendar, postChangePassword, postCreateProfessor, postListStudentByProfessor, postLogin, postNewPassword, postRegisterDirector, postUpdate } from "../controllers/userController.js"
 import { getRoleLogin } from "../services/RoleAurthguard.js"
 import { authguard } from "../services/authguardUser.js"
-import { verifieRoleDirector } from "../services/directorOnly.js"
-import { verifieRolePorfessor } from "../services/professorOnly.js"
+import { verifieRoleDirector, verifieRolePorfessor } from "../services/roleMiddleware.js"
+
 
 
 
@@ -11,6 +11,7 @@ export const userRouter = express.Router()
 
 //Accès LandingPage
 userRouter.get("/",getLandingPage)
+userRouter.get("/contact",getContact)
 
 //Gestion inscription Directeur
 userRouter.get("/register",getRegisterDirector)
@@ -21,6 +22,8 @@ userRouter.get("/login",getLogin)
 userRouter.post("/login",postLogin,getRoleLogin)
 
 //Gestion mot de passe oublié
+userRouter.get("/newPassword",getNewPassword)
+userRouter.post("/newPassword",postNewPassword)
 userRouter.get("/changePassword",getChangePassword)
 userRouter.post("/changePassword",postChangePassword)
 

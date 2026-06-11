@@ -3,6 +3,7 @@ import { adapter } from "../adapter.js";
 
 export const prisma = new PrismaClient({ adapter });
 
+// Crée un élève pour une école donnée.
 export async function createStudent(lastname, firstname, birthday, school_id) {
   return await prisma.student.create({
     data: {
@@ -16,6 +17,7 @@ export async function createStudent(lastname, firstname, birthday, school_id) {
   });
 }
 
+// Récupère les étudiants d'une école avec leur classe.
 export async function selectStudent(school_id) {
   return await prisma.student.findMany({
     select: {
@@ -32,6 +34,7 @@ export async function selectStudent(school_id) {
   });
 }
 
+// Compte le nombre d'élèves d'une école.
 export async function nbStudent(school_id) {
   return await prisma.student.count({
     where: {
@@ -40,9 +43,8 @@ export async function nbStudent(school_id) {
   });
 }
 
+// Affecte un élève à une classe.
 export async function affectClassroom(id, classroom_id) {
-  // console.log("Avant update:", { student_id: id, classroom_id });
-
   return await prisma.student.update({
     data: {
       classroom_id,
@@ -51,6 +53,7 @@ export async function affectClassroom(id, classroom_id) {
   });
 }
 
+// Récupère les élèves d'une école avec leur classe complète.
 export async function studentAddClassroom(school_id) {
   return await prisma.student.findMany({
     where: { school_id: school_id },
@@ -63,6 +66,7 @@ export async function studentAddClassroom(school_id) {
   });
 }
 
+// Récupère la classe d'un élève par son id.
 export async function nbClassroomForStudent(id) {
   return await prisma.student.findUnique({
     select: {
@@ -74,7 +78,7 @@ export async function nbClassroomForStudent(id) {
   });
 }
 
- // Pour afficher le nb d'élève dans chaque classe dans la page classroom.twig
+// Compte les élèves par classe pour une école.
 export async function nbStudentClassroom(school_id) {
   return await prisma.student.groupBy({
     by: ["classroom_id"],
@@ -83,45 +87,53 @@ export async function nbStudentClassroom(school_id) {
   });
 }
 
-
-export async function postUpdateStudent(id,lastname,firstname,birthday,classroom_id){
+// Met à jour les informations d'un élève.
+export async function postUpdateStudent(
+  id,
+  lastname,
+  firstname,
+  birthday,
+  classroom_id,
+) {
   return await prisma.student.update({
-    data :{
+    data: {
       lastname,
       firstname,
       birthday,
-      classroom_id
+      classroom_id,
     },
-    where :{id : id}
-  })
+    where: { id: id },
+  });
 }
 
-export async function deleteAffectation(id,classroom_id) {
+// Retire un élève de sa classe.
+export async function deleteAffectation(id, classroom_id) {
   return await prisma.student.update({
     where: { id: id },
     data: {
-      classroom: {disconnect : {id :classroom_id}}
+      classroom: { disconnect: { id: classroom_id } },
     },
   });
 }
+
+// Supprime un élève.
 export async function deleteStudent(id) {
   return await prisma.student.delete({
     where: { id: id },
   });
 }
 
-
-// Afficher la liste des élèves dans la modal du dashboardProfessor et pour gerer l'update de l'imputation dans le get grâce à "imputations : true"
+// Récupère les élèves d'une classe avec leurs imputations du jour.(dans la modal du dashboardProfessor)
 export async function selectStudentByClassroom(classroom_id) {
-const today = new Date();
+  const today = new Date();
 
-// Début de journée
-const startOfDay = new Date(today);
-startOfDay.setHours(0, 0, 0, 0);
+  // Début de journée
+  const startOfDay = new Date(today);
+  startOfDay.setHours(0, 0, 0, 0);
 
-// Fin de journée
-const endOfDay = new Date(today);
-endOfDay.setHours(23, 59, 59, 999);
+  // Fin de journée
+  const endOfDay = new Date(today);
+  endOfDay.setHours(23, 59, 59, 999);
 
   return await prisma.student.findMany({
     select: {
@@ -131,14 +143,14 @@ endOfDay.setHours(23, 59, 59, 999);
       birthday: true,
       classroom: true,
       // Récupération UNIQUEMENT l’imputation du jour
-      imputations : {
-        where :{
-          dateTime : {
-            gte : startOfDay,
-            lte : endOfDay
-          }
-        }
-      }
+      imputations: {
+        where: {
+          dateTime: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        },
+      },
     },
     where: {
       classroom_id: Number(classroom_id),
@@ -147,9 +159,9 @@ endOfDay.setHours(23, 59, 59, 999);
   });
 }
 
-// Pour gerer l'update de l'imputation dans le get (controller) et récupérer un élève 
+// Récupère un élève par son id pour l'update de l'imputation
 export async function selectStudentById(id) {
   return await prisma.student.findUnique({
-    where : {id : id}
-  })
+    where: { id: id },
+  });
 }

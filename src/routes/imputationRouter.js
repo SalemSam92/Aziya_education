@@ -1,7 +1,7 @@
 import express from "express"
 import { authguard } from "../services/authguardUser.js"
-import { verifieRolePorfessor } from "../services/professorOnly.js"
 import { getUpdate, newImputation, postUpdate, } from "../controllers/imputationController.js"
+import { verifieRolePorfessor } from "../services/roleMiddleware.js"
 
 export const imputationRouter = express.Router()
 

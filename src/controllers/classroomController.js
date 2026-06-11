@@ -15,6 +15,7 @@ import {
 } from "../../prisma/repository/classroomRepository.js";
 import { nbStudentClassroom } from "../../prisma/repository/studentRepository.js";
 
+// Crée une nouvelle classe après validation des champs.
 export async function postCreateClassroom(req, res) {
   const { name, nbMaxStudent } = req.body;
   const { school_id } = req.params;
@@ -46,6 +47,7 @@ export async function postCreateClassroom(req, res) {
   }
 }
 
+// Affecte un professeur à une classe, en vérifiant les conflits existants.
 export async function affectProfessorToClassroom(req, res) {
   const { professor, classroom } = req.body;
   const confirm = req.body.confirm === "true";
@@ -84,6 +86,7 @@ export async function affectProfessorToClassroom(req, res) {
   }
 }
 
+// Affiche la page de gestion des classes avec effectifs et détails.
 export async function getManagementClassroom(req, res) {
   const classroomId = req.query.id; //Récupération de l'id de la classe via ?id=xxx dans modalClassroom.js
 
@@ -95,7 +98,7 @@ export async function getManagementClassroom(req, res) {
           req.session.user.school_id,
           Number(classroomId),
         )
-      : null; // Charge les élèves de la classe si un id est fourni(classromId), sinon renvoie null
+      : null; // Charge les élèves si un id de classe est fourni ; renvoie un tableau vide si la classe n’a aucun élève, ou null si aucun id n’est passé
     const arrayClassroom = []; // Fusion des deux tableaux (classrooms et countStud)
 
     classrooms.forEach((classroom) => {
@@ -134,6 +137,7 @@ export async function getManagementClassroom(req, res) {
     console.log(error);
   }
 }
+// Met à jour le nom et la capacité maximale d'une classe.
 export async function postUpdate(req, res) {
   const { name, nbMaxStudent } = req.body;
   const { id } = req.params;
@@ -156,6 +160,7 @@ export async function postUpdate(req, res) {
     console.log(error);
   }
 }
+// Supprime une classe par son id.
 export async function deleteClass(req, res) {
   const { id } = req.params;
   try {

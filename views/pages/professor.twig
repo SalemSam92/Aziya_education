@@ -104,18 +104,22 @@
 							</tr>
 						{% endfor %}
 					</tbody>
-			</table>
-			
+				</table>
+
+			</div>
+			<div>
+				<a href="/dashboardDirector"><- Retour à la page d'acceuil</a>
+			</div>
+
+			{% if errorUpdate %}
+				<div class="messError">
+					{{errorUpdate}}
+				</div>
+			{% endif %}
+			{% if messSucces %}
+				<div class="messSucces">
+					{{messSucces}}
+				</div>
+			{% endif %}
 		</div>
-		{% if errorUpdate %}
-					<div class="messError">
-						{{errorUpdate}}
-					</div>
-				{% endif %}
-					{% if messSucces %}
-					<div class="messSucces">
-						{{messSucces}}
-					</div>
-				{% endif %}
-	</div>
-{% endblock %}
+	{% endblock %}

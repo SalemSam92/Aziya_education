@@ -1,4 +1,4 @@
-<div class="box">
+<div class="box-imputation">
 	<div class="table-container">
 		<h2>Liste des élèves</h2>
 
@@ -19,7 +19,11 @@
 					<th>Date de naissance</th>
 					<th>Présent</th>
 					<th>Absent</th>
-					<th>Modifier</th>
+					{% for student in students %}
+						{% if student.imputations|length > 0%}
+							<th>Modifier</th>
+						{% endif %}
+					{% endfor %}
 				</tr>
 			</thead>
 
@@ -92,7 +96,7 @@
 
 								{# S'll n' y a pas d'imputation aujourd’hui (Tableau dans student vide) #}
 							{% else %}
-							{# MODE CREATION #}
+								{# MODE CREATION #}
 								<form action="/imputation" method="post">
 									<input type="hidden" name="imputation" value="">
 									<input type="hidden" name="student_id" value="{{ student.id }}">

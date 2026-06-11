@@ -19,6 +19,7 @@ import {
   selectClassroom,
 } from "../../prisma/repository/classroomRepository.js";
 
+// Crée un nouvel élève après validation des champs.
 export async function postCreateStudent(req, res) {
   const { lastname, firstname, birthday } = req.body;
   const { school_id } = req.params;
@@ -64,6 +65,7 @@ export async function postCreateStudent(req, res) {
   }
 }
 
+// Affecte une classe à un élève sélectionné.
 export async function affectClassroomToStudent(req, res) {
   const { student_id, classroom_id } = req.body;
 
@@ -76,7 +78,7 @@ export async function affectClassroomToStudent(req, res) {
   }
   try {
     await affectClassroom(Number(student_id), Number(classroom_id));
-    req.session.succes = "Affectation réalisée avec succès."
+    req.session.succes = "Affectation réalisée avec succès.";
     res.redirect("/dashboardDirector");
   } catch (error) {
     console.log(error);
@@ -87,6 +89,7 @@ export async function affectClassroomToStudent(req, res) {
   }
 }
 
+// Affiche la page de gestion des élèves avec données et messages.
 export async function getManagementStudent(req, res) {
   try {
     const students = await selectStudent(req.session.user.school_id);
@@ -140,6 +143,7 @@ export async function getManagementStudent(req, res) {
   }
 }
 
+// Met à jour un élève après validation de ses informations.
 export async function postUpdate(req, res) {
   const { lastname, firstname, birthday, classroom_id } = req.body;
   const { id } = req.params;
@@ -195,6 +199,7 @@ export async function postUpdate(req, res) {
   }
 }
 
+// Supprime l'affectation de classe d'un élève.
 export async function disconnectClassroom(req, res) {
   const { classrom_id } = req.body;
   const { id } = req.params;
@@ -208,6 +213,7 @@ export async function disconnectClassroom(req, res) {
   }
 }
 
+// Supprime un élève par son id.
 export async function deleteStud(req, res) {
   const { id } = req.params;
   try {

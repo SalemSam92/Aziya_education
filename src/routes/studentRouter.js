@@ -1,7 +1,8 @@
 import express from "express"
 import { affectClassroomToStudent, deleteStud, disconnectClassroom, getManagementStudent, postCreateStudent, postUpdate } from "../controllers/studentController.js"
 import { authguard } from "../services/authguardUser.js"
-import { verifieRoleDirector } from "../services/directorOnly.js"
+import { verifieRoleDirector } from "../services/roleMiddleware.js"
+
 
 export const studentRouter = express.Router()
 

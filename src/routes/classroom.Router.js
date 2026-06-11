@@ -1,7 +1,8 @@
 import express from "express"
 import { affectProfessorToClassroom, deleteClass, disconnectClass, getManagementClassroom, postCreateClassroom, postUpdate } from "../controllers/classroomController.js"
 import { authguard } from "../services/authguardUser.js"
-import { verifieRoleDirector } from "../services/directorOnly.js"
+import { verifieRoleDirector } from "../services/roleMiddleware.js"
+
 
 
 

@@ -42,6 +42,16 @@ main {
   color: #555;
   line-height: 1.6;
 }
+.btn {
+  display: inline-block;
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: #35895f; /* vert principal */
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
 
 .features {
   padding: 48px 32px;

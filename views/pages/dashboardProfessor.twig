@@ -43,7 +43,7 @@
 			<form action="/dashboardProfessor" method="post">
 
 				<select name="classroom_id" id="">
-					<option value="">----Choisir une classe----</option>
+					<option value="">----Sélectionner une classe----</option>
 					{% for classroom in professorWithClassroom %}
 						{% if classroom.professor_id == user.id  %}
 							<option value="{{classroom.id}}">
@@ -62,7 +62,7 @@
 			<form action="/dashboardProfessor/{{studentId.id}}" method="post">
 
 				<select name="student_id" id="">
-					<option value="">----Choisir un élève----</option>
+					<option value="">----Sélectionner un élève----</option>
 					{% for classroom in listStudentByProfessor %}
 						{# listStudentByProfessor = liste de classes et classroom = une classe #}
 						{% for student in classroom.student %}

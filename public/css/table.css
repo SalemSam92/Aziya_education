@@ -1,5 +1,14 @@
 .box {
   background: #ffffff;
+  width: 450px;
+  margin: 20px auto;
+  margin-bottom: 0;
+  padding: 30px;
+  border-radius: 8px;
+  /* box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); */
+}
+.box-imputation {
+  background: #ffffff;
   width: 600px;
   margin: 20px auto;
   margin-bottom: 0;
@@ -59,18 +68,21 @@ button:hover {
   cursor: pointer;
 }
 
-.btn-validate,#isPresent {
+.btn-validate,
+#isPresent {
   background-color: #35895f;
   border: 2px solid #35895f;
 }
 
-.btn-validate:hover,#isPresent:hover {
+.btn-validate:hover,
+#isPresent:hover {
   background-color: #44b37b;
   border: 2px solid #44b37b;
 }
 
 .btn-delete,
-#close,#isAbsent {
+#close,
+#isAbsent {
   border: 2px solid #c62828;
   background-color: #c62828;
   color: white;
@@ -144,4 +156,124 @@ button:hover {
   font-weight: bolder;
   width: 50%;
   margin-top: 10px;
+}
+
+/* ============================
+   RESPONSIVE RÉELLEMENT EFFICACE
+   ============================ */
+
+/* TABLETTE */
+@media (max-width: 840px) {
+  .box,
+  .box-imputation {
+    background: #ffffff;
+    width: 400px;
+    margin: 20px auto;
+    margin-bottom: 0;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  .center {
+    width: 95%;
+    padding: 20px;
+  }
+
+ 
+
+  .table {
+    font-size: 14px;
+  }
+
+  .table td,
+  .table th {
+    padding: 4px;
+  }
+
+  button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .btn-delete,
+  #close,
+  #isAbsent,
+  .btn-validate {
+    padding: 6px 1px;
+    font-size: 10px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  /* Permet au tableau de scroller horizontalement */
+  
+
+  .table {
+    width: 400px; /* largeur minimale pour garder la lisibilité */
+    font-size: 12px;
+  }
+
+  .table td,
+  .table th {
+    padding: 6px;
+  }
+
+  button {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  .btn-delete,
+  #close,
+  #isAbsent {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .messError,
+  .messSucces {
+    width: 100%;
+    font-size: 12px;
+    padding: 8px;
+  }
+}
+@media (max-width: 500px) {
+  .table-container {
+    padding: 1px;
+  }
+  .table td,
+  .table th {
+    padding: 2px;
+  }
+  button {
+    padding: 5px 8px;
+    font-size: 8px;
+  }
+  .btn-delete,
+  #close,
+  #isAbsent {
+    padding: 5px 8px;
+    font-size: 8px;
+  }
+}
+@media (max-width: 450px) {
+ .sideBar{
+  margin: 10px auto;
+ }
+ .center{
+  margin: 20px auto;
+ }
+  .table td,
+  .table th {
+    padding: 3px;
+    
+  }
+  button {
+    padding: 3px 8px;
+    font-size: 6px;
+  }
+  .btn-delete,
+  #close,
+  #isAbsent {
+    padding: 3px 8px;
+    font-size: 6px;
+  }
 }

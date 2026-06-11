@@ -9,6 +9,7 @@ import {
 } from "../services/regexDirector.js";
 import {
   ChangePassword,
+  ChangePasswordById,
   createProfessor,
   deleteProfessor,
   getUpdateProfessor,
@@ -39,11 +40,22 @@ import {
   imputationByStudent,
   listImputationsByStudent,
 } from "../../prisma/repository/imputationRepository.js";
+import { transporter } from "../services/mailer.js";
+import { generateToken, verifieToken } from "../services/jwt.js";
 
 export async function getLandingPage(req, res) {
   try {
     res.render("pages/landingPage.twig", {
       title: "AziyaEducation",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function getContact(req, res) {
+  try {
+    res.render("pages/contact.twig", {
+      title: "Contact",
     });
   } catch (error) {
     console.log(error);
@@ -175,53 +187,152 @@ export async function postLogin(req, res, next) {
   }
 }
 
-//Affichage de la page ChangePassword
-export async function getChangePassword(req, res) {
+//Affichage de la page newPassword soit via "mot de passe oublié" soit via le lien de l'e-mail envoyé
+export async function getNewPassword(req, res) {
   try {
-    res.render("pages/changePassword.twig", {
-      title: "Mot de passe oublié",
+    res.render("pages/NewPassword.twig", {
+      title: "Réinitialisation mot de passe",
     });
   } catch (error) {
     console.log(error);
   }
 }
 
-//Création de nouveau mot de passe
-export async function postChangePassword(req, res) {
-  const { mail, password } = req.body;
+export async function postNewPassword(req, res) {
+  const { token, mail } = req.body;
 
-  if (!mailRegex.test(mail) || !mail) {
+  try {
+    const user = await login(mail);
+
+    if (!user) {
+      res.render("pages/newPassword", {
+        title: "Réinitialisation du mot de passe",
+        errorUser: "Aucun compte associé à cette adresse e-mail",
+      });
+    }
+    const token = generateToken(user.id);
+    await transporter.sendMail({
+      from: process.env.MAIL_USER,
+      to: mail,
+      subject: "Réinitialisation du mot de passe",
+      html: `<div style="font-family: Arial, sans-serif; background-color:#f5f5f5; padding:20px;">
+  <div style="max-width:600px; margin:auto; background:white; border-radius:8px; padding:25px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+
+    <!-- Logo textuel -->
+    <div style="font-size:32px; font-weight:bold; margin-bottom:25px;">
+      <span style="color:#35895f;">Aziya</span><span style="color:#000000;">Education</span>
+    </div>
+
+    <!-- Titre de bienvenue -->
+    <h2 style="color:#2c3e50; margin-bottom:20px; text-align:center;">
+      Bonjour
+       <font color="#35895f">Aziya</font><font color="#000000">Education</font>
+    </h2>
+    
+    <!-- Texte principal -->
+    <p style="font-size:16px; color:#333; line-height:1.6;">
+      Vous allez modifier votre mot de passe sur 
+      <strong style="color:#35895f;">AziyaEducation</strong>.
+    </p>
+
+    <p style="font-size:16px; color:#333; line-height:1.6;">
+      Pour des raisons de sécurité, vous devez définir votre propre mot de passe avant de pouvoir vous connecter.
+    </p>
+
+    <!-- Bouton vert -->
+    <div style="margin:30px 0;">
+      <a href="http://localhost:3002/changePassword?token=${token}"
+         style="background:#35895f; color:white; padding:12px 22px; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold; display:inline-block;">
+        Réinitialiser mon mot de passe
+      </a>
+    </div>
+
+    <!-- Lien alternatif -->
+    <p style="font-size:14px; color:#555; line-height:1.6;">
+      Si le bouton ne fonctionne pas, vous pouvez copier/coller ce lien dans votre navigateur :
+    </p>
+
+    <div style="margin:20px 0;">
+      <a href="http://localhost:3002/changePassword?token=${token}" 
+         style="color:#35895f; font-weight:bold; text-decoration:none;">
+        Cliquer ici
+      </a>
+    </div>
+
+    <hr style="border:none; border-top:1px solid #eee; margin:30px 0;">
+
+    <p style="font-size:12px; color:#999;">
+      Ceci est un message automatique, merci de ne pas y répondre.
+    </p>
+
+  </div>
+</div>`,
+    });
+    res.redirect("/login");
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Affichage de la page ChangePassword soit via "mot de passe oublié" soit via le lien de l'e-mail envoyé
+export async function getChangePassword(req, res) {
+  const {token} = req.query
+  try {
+    res.render("pages/changePassword.twig", {
+      title: "Nouveau mot de passe",
+      token // <-- ON PASSE LE TOKEN AU TEMPLATE
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Création de nouveau mot de passe via le token et "mot de passe oublié"
+export async function postChangePassword(req, res) {
+  const { password } = req.body;
+  const { token } = req.body;
+
+  // Si pas de token → flux "mot de passe oublié" → on doit valider le mail
+  if (!token) {
     return res.render("pages/changePassword.twig", {
       title: "Mot de passe oublié",
-      errorNewPassword: "Identifiants invalide",
+      errorNewPassword: "Lien invalide ou expiré",
     });
   }
 
+  // Validation du mot de passe dans TOUS les cas (token ou pas)
   if (!passwordRegex.test(password) || !password) {
     return res.render("pages/changePassword.twig", {
-      title: "Mot de passe oublié",
+      title: token ? "Nouveau mot de passe" : "Mot de passe oublié",
       errorNewPassword: "Identifiants invalide",
     });
   }
 
   try {
-    const user = await login(mail);
-    if (!user) {
-      throw new Error("Utilisateur introuvable");
+    // --- FLUX AVEC TOKEN ---
+    // Cas du lien envoyé par le directeur → on identifie via l'ID contenu dans le token pour plus de sécurité
+
+    const payload = verifieToken(token); // Vérifie et décode le token
+
+    const professorId = await getUpdateProfessor(payload.id); // Vérifie que le professeur existe
+    if (!professorId) {
+      return res.render("pages/changePassword.twig", {
+        title: "Nouveau mot de passe",
+        errorNewPassword: "Compte introuvable",
+      });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
+    await ChangePasswordById(payload.id, passwordHash); // Mise à jour via ID
 
-    await ChangePassword(mail, passwordHash);
-    res.render("pages/changePassword.twig",{
-      title : "Mot de passe oublié",
-      succesChangePassword : "Votre mot de passe a été modifié avec succès."
+    return res.render("pages/changePassword.twig", {
+      title: "Nouveau mot de passe",
+      succesChangePassword: "Votre mot de passe a été modifié avec succès.",
     });
   } catch (error) {
     console.log(error);
-      console.log(error.message);
     res.render("pages/changePassword.twig", {
-      title: "Mot de passe oublié",
+      title: token ? "Nouveau mot de passe" : "Mot de passe oublié",
       errorNewPassword: "Identifiants invalide",
     });
   }
@@ -255,7 +366,6 @@ export async function postCreateProfessor(req, res) {
 
   try {
     const user = await login(mail);
-    console.log(user);
     const hashPassword = await bcrypt.hash(password, 10);
 
     if (!user) {
@@ -267,7 +377,67 @@ export async function postCreateProfessor(req, res) {
         hashPassword,
         Number(school_id),
       );
-      req.session.succes = "Création effectuée.";
+      const token = generateToken(newUser.id);
+
+      await transporter.sendMail({
+        from: process.env.MAIL_USER,
+        to: mail,
+        subject: "Votre compte professeur a été créé",
+        html: `<div style="font-family: Arial, sans-serif; background-color:#f5f5f5; padding:20px;">
+  <div style="max-width:600px; margin:auto; background:white; border-radius:8px; padding:25px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+
+    <!-- Logo textuel -->
+    <div style="font-size:32px; font-weight:bold; margin-bottom:25px;">
+      <span style="color:#35895f;">Aziya</span><span style="color:#000000;">Education</span>
+    </div>
+
+    <!-- Titre de bienvenue -->
+    <h2 style="color:#2c3e50; margin-bottom:20px; text-align:center;">
+      Bonjour ${lastname} ${firstname}, bienvenue sur 
+       <font color="#35895f">Aziya</font><font color="#000000">Education</font>
+    </h2>
+    
+    <!-- Texte principal -->
+    <p style="font-size:16px; color:#333; line-height:1.6;">
+      Votre directeur vient de créer votre compte professeur sur la plateforme 
+      <strong style="color:#35895f;">AziyaEducation</strong>.
+    </p>
+
+    <p style="font-size:16px; color:#333; line-height:1.6;">
+      Pour des raisons de sécurité, vous devez définir votre propre mot de passe avant de pouvoir vous connecter.
+    </p>
+
+    <!-- Bouton vert -->
+    <div style="margin:30px 0;">
+      <a href="http://localhost:3002/changePassword?token=${token}"
+         style="background:#35895f; color:white; padding:12px 22px; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold; display:inline-block;">
+        Définir mon mot de passe
+      </a>
+    </div>
+
+    <!-- Lien alternatif -->
+    <p style="font-size:14px; color:#555; line-height:1.6;">
+      Si le bouton ne fonctionne pas, vous pouvez copier/coller ce lien dans votre navigateur :
+    </p>
+
+    <div style="margin:20px 0;">
+      <a href="http://localhost:3002/changePassword?token=${token}" 
+         style="color:#35895f; font-weight:bold; text-decoration:none;">
+        Cliquer ici
+      </a>
+    </div>
+
+    <hr style="border:none; border-top:1px solid #eee; margin:30px 0;">
+
+    <p style="font-size:12px; color:#999;">
+      Ceci est un message automatique, merci de ne pas y répondre.
+    </p>
+
+  </div>
+</div>`,
+      });
+      req.session.succes =
+        "Création effectuée, un e-mail à été envoyé au nouveau professeur";
       res.redirect("/dashboardDirector");
     }
     if (user) {
