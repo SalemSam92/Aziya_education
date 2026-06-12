@@ -190,7 +190,7 @@ export async function postLogin(req, res, next) {
 //Affichage de la page newPassword soit via "mot de passe oublié" soit via le lien de l'e-mail envoyé
 export async function getNewPassword(req, res) {
   try {
-    res.render("pages/NewPassword.twig", {
+    res.render("pages/newPassword.twig", {
       title: "Réinitialisation mot de passe",
     });
   } catch (error) {
