@@ -4,7 +4,7 @@ model Student {
     firstname String   @db.VarChar(40)
     birthday  DateTime
 
-    classroom_id Int
+    classroom_id Int?
     classroom    Classroom? @relation(fields: [classroom_id], references: [id])
     
     school_id Int
