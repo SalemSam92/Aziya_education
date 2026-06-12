@@ -241,7 +241,7 @@ export async function postNewPassword(req, res) {
 
     <!-- Bouton vert -->
     <div style="margin:30px 0;">
-      <a href="http://localhost:3002/changePassword?token=${token}"
+      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}"
          style="background:#35895f; color:white; padding:12px 22px; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold; display:inline-block;">
         Réinitialiser mon mot de passe
       </a>
@@ -409,7 +409,7 @@ export async function postCreateProfessor(req, res) {
 
     <!-- Bouton vert -->
     <div style="margin:30px 0;">
-      <a href="http://localhost:3002/changePassword?token=${token}"
+      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}"
          style="background:#35895f; color:white; padding:12px 22px; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold; display:inline-block;">
         Définir mon mot de passe
       </a>
