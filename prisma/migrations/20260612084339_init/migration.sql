@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE `classroom` (
+CREATE TABLE `Classroom` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(10) NOT NULL,
     `nbMaxStudent` INTEGER NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `classroom` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `imputation` (
+CREATE TABLE `Imputation` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `dateTime` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `isPresent` BOOLEAN NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `imputation` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `school` (
+CREATE TABLE `School` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `siret` VARCHAR(14) NOT NULL,
     `name` VARCHAR(40) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `school` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `student` (
+CREATE TABLE `Student` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `lastname` VARCHAR(45) NOT NULL,
     `firstname` VARCHAR(40) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE `student` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `user` (
+CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `lastname` VARCHAR(45) NOT NULL,
     `firstname` VARCHAR(40) NOT NULL,
@@ -66,19 +66,19 @@ CREATE TABLE `user` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `classroom` ADD CONSTRAINT `classroom_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `school`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Classroom` ADD CONSTRAINT `classroom_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `School`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `classroom` ADD CONSTRAINT `classroom_professor_id_fkey` FOREIGN KEY (`professor_id`) REFERENCES `user`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Classroom` ADD CONSTRAINT `classroom_professor_id_fkey` FOREIGN KEY (`professor_id`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `imputation` ADD CONSTRAINT `imputation_student_id_fkey` FOREIGN KEY (`student_id`) REFERENCES `student`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Imputation` ADD CONSTRAINT `imputation_student_id_fkey` FOREIGN KEY (`student_id`) REFERENCES `Student`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `student` ADD CONSTRAINT `student_classroom_id_fkey` FOREIGN KEY (`classroom_id`) REFERENCES `classroom`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Student` ADD CONSTRAINT `student_classroom_id_fkey` FOREIGN KEY (`classroom_id`) REFERENCES `Classroom`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `student` ADD CONSTRAINT `student_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `school`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Student` ADD CONSTRAINT `student_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `School`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `user` ADD CONSTRAINT `user_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `school`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `User` ADD CONSTRAINT `user_school_id_fkey` FOREIGN KEY (`school_id`) REFERENCES `School`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
