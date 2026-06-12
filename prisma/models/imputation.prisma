@@ -1,10 +1,10 @@
-model Imputation {
+model imputation {
     id        Int      @id @default(autoincrement())
     dateTime  DateTime @default(now())
     isPresent Boolean
 
     student_id Int
-    student    Student @relation(fields: [student_id], references: [id])
+    student    student @relation(fields: [student_id], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

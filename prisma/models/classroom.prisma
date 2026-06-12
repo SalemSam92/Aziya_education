@@ -1,15 +1,15 @@
-model Classroom {
+model classroom {
     id           Int    @id @default(autoincrement())
     name         String  @db.VarChar(10)
     nbMaxStudent Int
 
     school_id Int
-    school    School @relation(fields: [school_id], references: [id])
+    school    school @relation(fields: [school_id], references: [id])
 
     professor_id Int?  
-    user         User? @relation("ProfessorClassroom", fields: [professor_id], references: [id])
+    user         user? @relation("ProfessorClassroom", fields: [professor_id], references: [id])
 
-    student   Student[]
+    student   student[]
     
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
