@@ -253,7 +253,7 @@ export async function postNewPassword(req, res) {
     </p>
 
     <div style="margin:20px 0;">
-      <a href="http://localhost:3002/changePassword?token=${token}" 
+      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}" 
          style="color:#35895f; font-weight:bold; text-decoration:none;">
         Cliquer ici
       </a>
@@ -421,7 +421,7 @@ export async function postCreateProfessor(req, res) {
     </p>
 
     <div style="margin:20px 0;">
-      <a href="http://localhost:3002/changePassword?token=${token}" 
+      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}" 
          style="color:#35895f; font-weight:bold; text-decoration:none;">
         Cliquer ici
       </a>
