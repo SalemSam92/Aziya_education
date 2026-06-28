@@ -32,18 +32,19 @@ export async function updateImputation(id, isPresent) {
 
 // Vérifie si un élève a déjà une imputation pour le jour courant.
 export async function imputationByStudent(student_id) {
-  const today = new Date();
-  const startOfDay = new Date(today);
-  startOfDay.setHours(0, 0, 0, 0);
+  const today = new Date();// Obtient la date actuelle
+  const startOfDay = new Date(today);// Crée un objet Date pour le début de la journée
+  startOfDay.setHours(0, 0, 0, 0);// Définit l'heure à minuit pour obtenir le début de la journée
 
-  const endOfDay = new Date(today);
-  endOfDay.setHours(23, 59, 59, 999);
+  const endOfDay = new Date(today);// Crée un objet Date pour la fin de la journée
+  endOfDay.setHours(23, 59, 59, 999);// Définit l'heure à 23:59:59.999 pour obtenir la fin de la journée
+
   return await prisma.imputation.findFirst({ // findFirst est utilisé car la requête filtre sur plusieurs champs (élève + date du jour) et, faute de clé unique, il renvoie simplement null s’il nexiste aucune imputation.
     where: {
       student_id: student_id,
       dateTime: {
-        gte: startOfDay,
-        lte: endOfDay,
+        gte: startOfDay,//plus grand que ou égal à minuit
+        lte: endOfDay,//plus petit que ou égal à 23:59:59.999
       },
     },
   });

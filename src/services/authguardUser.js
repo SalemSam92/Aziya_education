@@ -31,8 +31,6 @@ export async function authguard(req, res, next) {
     console.log(error.message);
     res.render("pages/login.twig", {
       title: "Connexion",
-      errorAccess:
-        "Vous ne pouvez pas accéder à cette page sans vous identifier",
     });
   }
 }

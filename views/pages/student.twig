@@ -93,7 +93,7 @@
 									<td>
 										{% if updateStudent == student.id %}
 
-											{% for classroom in capaciteMaxClassroom if classroom.nbMaxStudent > classroom.student.length %}
+											{% for classroom in capaciteMaxClassroom if classroom.nbMaxStudent > classroom.student.length %}{# On filtre les classes pour n'afficher que celles qui ont de la place disponible #}
 												{# le if ici sert a filtrer la boucle avant qu'elle commence #}
 												{# loop existe automatiquement dans chaque boucle for #}
 												{# loop =infos sur la boucle, loop.first =première itération, loop.last =dernière itération #}
@@ -114,7 +114,7 @@
 											{% endfor %}
 
 										{% else %}
-											{{ student.classroom }}
+											{{ student.classroom }} {# Affiche le nom de la classe de l'élève ou "Pas de classe assignée" #}
 										{% endif %}
 									</td>
 									<td>

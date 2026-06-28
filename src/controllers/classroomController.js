@@ -4,7 +4,7 @@ import {
 } from "../services/regexDirector.js";
 import {
   affectProfessor,
-  countStudent,
+  // countStudent,
   createClassroom,
   deleteAffectation,
   deleteClassroom,
@@ -19,9 +19,6 @@ import { nbStudentClassroom } from "../../prisma/repository/studentRepository.js
 export async function postCreateClassroom(req, res) {
   const { name, nbMaxStudent } = req.body;
   const { school_id } = req.params;
-
-  console.log(req.body);
-  console.log(req.params.school_id);
 
   if (!nameClassroomRegex.test(name) || !name) {
     req.session.errorAdd =
@@ -53,27 +50,30 @@ export async function affectProfessorToClassroom(req, res) {
   const confirm = req.body.confirm === "true";
   console.log(req.body);
   console.log(req.body.confirm);
-  
+
   if (!professor || !classroom) {
+    // Vérifie si le professeur et la classe sont sélectionnés
     req.session.errorAdd =
       "Veuillez sélectionner un professeur et une classe avant de poursuivre.";
     return res.redirect("/dashboardDirector");
   }
 
   try {
-     // Vérifie si le professeur possède déjà une classe
-    const professorHasClass = await nbClassroomByProfessor(Number(professor));
+    // Vérifie si le professeur possède déjà une classe
+    const professorHasClass = await nbClassroomByProfessor(Number(professor)); // Récupère le nombre de classes associées au professeur sélectionné
 
     if (professorHasClass >= 1 && !confirm) {
-      //Si le prof possède déjà une classe ou plus et que le confirm n'existe pas (form du dashboard)=> redirection modal
+    // Si le professeur a déjà une classe et que la confirmation (de la modal confirmAffectProf.twig) n'est pas donnée, on affiche la modal de confirmation 
+      
 
       return res.render("pages/dashboardDirector.twig", {
-        confirmAffectation: true, // Indique à la vue d'afficher le modal de confirmation : le true = modal visible 
-        professor,
-        classroom,
+        confirmAffectation: true, // Indique à la vue d'afficher la modal de confirmation : le true = modal visible
+        professor, // Passe l'ID du professeur pour l'affichage dans la modal
+        classroom, // Passe l'ID de la classe pour l'affichage dans la modal
       });
     }
 
+    // Si le professeur n'a pas de classe ou si la confirmation est donnée, on procède à l'affectation
     await affectProfessor(Number(professor), Number(classroom));
     req.session.succes = "Affectation réalisée avec succès.";
     res.redirect("/dashboardDirector");
@@ -91,29 +91,32 @@ export async function getManagementClassroom(req, res) {
   const classroomId = req.query.id; //Récupération de l'id de la classe via ?id=xxx dans modalClassroom.js
 
   try {
-    const classrooms = await selectClassroom(req.session.user.school_id);
-    const countStud = await nbStudentClassroom(req.session.user.school_id);
-    const allStudentByClassroom = classroomId
+    const classrooms = await selectClassroom(req.session.user.school_id); // Récupération de toutes les classes de l'école de l'utilisateur connecté
+    const countStud = await nbStudentClassroom(req.session.user.school_id); // Récupération du nombre d'élèves par classe pour l'école de l'utilisateur connecté
+    const allStudentByClassroom = classroomId 
       ? await dipslayStudentByClassroom(
           req.session.user.school_id,
           Number(classroomId),
         )
       : null; // Charge les élèves si un id de classe est fourni ; renvoie un tableau vide si la classe n’a aucun élève, ou null si aucun id n’est passé
-    const arrayClassroom = []; // Fusion des deux tableaux (classrooms et countStud)
+      
+    const arrayClassroom = []; // Tableau pour stocker les informations des classes avec le nombre d'élèves (Fusion des deux tableaux (classrooms et countStud))
 
-    classrooms.forEach((classroom) => {
-      let nb = 0;
+    
+    classrooms.forEach((classroom) => { // Parcours de toutes les classes récupérées
+      let nb = 0; // Initialisation du compteur d'élèves pour la classe actuelle
 
       countStud.forEach((count) => {
-        if (count.classroom_id === classroom.id) {
-          nb = count._count.id;
+        if (count.classroom_id === classroom.id) { // Vérifie si l'id de la classe dans countStud correspond à l'id de la classe actuelle
+          nb = count._count.id; // Si correspondance, met à jour le compteur nb avec le nombre d'élèves pour cette classe
         }
-      });
+      });// Parcours du tableau countStud pour trouver le nombre d'élèves correspondant à la classe actuelle et mise à jour du compteur nb
+
       arrayClassroom.push({
         id: classroom.id,
         name: classroom.name,
         nbMaxStudent: classroom.nbMaxStudent,
-        nbStud: nb,
+        nbStud: nb, 
       });
     });
 
@@ -128,7 +131,7 @@ export async function getManagementClassroom(req, res) {
       title: "Gestion des classes",
       user: req.session.user,
       classrooms: arrayClassroom,
-      updateClassroom: Number(req.params.id),
+      updateClassroom: Number(req.params.id),// Récupération de l'id de la classe à mettre à jour depuis les paramètres de l'URL
       allStudentByClassroom,
       errorUpdate,
       messSucces,

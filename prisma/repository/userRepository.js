@@ -14,7 +14,7 @@ export async function registerDirector(
 ) {
   return await prisma.user.create({
     data: {
-      school: {
+      school: {// Crée un établissement associé au directeur grace à la relation définie dans le schéma Prisma.relation one-to-one entre User et School.
         create: {
           name: schoolName,
           siret,
@@ -26,6 +26,14 @@ export async function registerDirector(
       password,
       role: "DIRECTOR",
     },
+  });
+}
+
+// Récupère l'école correspondant à un numéro SIRET pour verifier si elle existe déjà lors de l'inscription d'un directeur.
+export async function getSchoolBySiret(siret) {
+ return await prisma.school.findUnique({
+    where: { siret },
+   
   });
 }
 
@@ -68,9 +76,9 @@ export async function createProfessor(
       firstname,
       mail,
       password,
-      role: "PROFESSOR",
+      role: "PROFESSOR",// Définit le rôle du nouvel utilisateur comme professeur.
       school: {
-        connect: { id: school_id },
+        connect: { id: school_id },// Connecte le professeur à l'école existante grâce à la relation définie dans le schéma Prisma.relation many-to-one entre User et School.
       },
     },
   });

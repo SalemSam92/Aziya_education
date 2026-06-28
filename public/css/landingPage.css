@@ -12,29 +12,36 @@ body {
     "Open Sans",
     "Helvetica Neue",
     sans-serif;
-    /* font-family: "Poppins", sans-serif; */
+  /* font-family: "Poppins", sans-serif; */
   background: #f4f6f8;
   color: #333;
 }
-h1, h2, h3 {
-    font-family: "Montserrat", sans-serif;
+h1,
+h2,
+h3 {
+  font-family: "Montserrat", sans-serif;
 }
 
 main {
   display: flex;
+  flex-direction: row;
+  gap: 0;
 }
 
 .landing-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   padding: 64px 32px;
-  max-width: 700px;
-  margin: auto;
 }
 
 .landing-section h1 {
   font-size: 36px;
   margin-bottom: 16px;
-  color: #1f2933; 
+  color: #1f2933;
 }
 
 .landing-section p {
@@ -54,21 +61,26 @@ main {
 }
 
 .features {
+  flex: 1;
   padding: 48px 32px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .features h2 {
   font-size: 26px;
   margin-bottom: 32px;
   color: #1f2933; /* gris foncé */
+  margin-top: 0;
 }
 
 .grid {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  max-width: 900px;
-  margin: auto;
+  max-width: 90%;
 }
 
 .card {
@@ -93,6 +105,12 @@ main {
     display: flex;
     flex-direction: column;
   }
+  .landing-section {
+    flex: none;
+  }
+  .features {
+    flex: none;
+  }
   .logo {
     font-size: 18px;
   }
@@ -101,5 +119,4 @@ main {
     margin-bottom: 10px;
     font-size: 13px;
   }
-
 }

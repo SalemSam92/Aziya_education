@@ -50,7 +50,7 @@
 					</thead>
 
 					<tbody>
-						{% for classroom in classrooms %}
+						{% for classroom in classrooms %} {# Boucle sur chaque classe dans le tableau classrooms (classrooms = arrayClassroom)#}
 							<tr>
 
 								<form action="/classroom/{{ classroom.id }}/updateClassroom" method={% if updateClassroom == classroom.id %} "post" {% else %} "get" {% endif %}>
@@ -92,7 +92,7 @@
 								</td>
 
 								<td>
-									<button class="buttons" data-classroom-id="{{ classroom.id }}">
+									<button class="buttons" data-classroom-id="{{ classroom.id }}"> {#data-classroom-id est un attribut HTML personnalisé qui stocke l'id de la classe pour l'utiliser dans le script modalClassroom.js#}
 										Afficher les élèves
 									</button>
 								</td>

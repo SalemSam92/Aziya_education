@@ -8,7 +8,7 @@ import {
   createStudent,
   deleteAffectation,
   deleteStudent,
-  nbClassroomForStudent,
+  // nbClassroomForStudent,
   nbStudentClassroom,
   postUpdateStudent,
   selectStudent,
@@ -89,31 +89,30 @@ export async function affectClassroomToStudent(req, res) {
   }
 }
 
-// Affiche la page de gestion des élèves avec données et messages.
+// Récupère les informations des étudiants et des classes pour l'affichage dans la vue de gestion des élèves.
 export async function getManagementStudent(req, res) {
   try {
-    const students = await selectStudent(req.session.user.school_id);
-    const classrooms = await selectClassroom(req.session.user.school_id);
-    const capaciteMaxClassroom = await nbStudentMaxByClassroom(
-      req.session.user.school_id,
-    );
-    const arrayStudent = [];
+    const students = await selectStudent(req.session.user.school_id);// Récupère les étudiants de l'école de l'utilisateur connecté
+    const classrooms = await selectClassroom(req.session.user.school_id);// Récupère les classes de l'école de l'utilisateur connecté
+    const capaciteMaxClassroom = await nbStudentMaxByClassroom(req.session.user.school_id);// Récupère le nombre maximum d'élèves par classe pour l'école de l'utilisateur connecté
+    const arrayStudent = [];// Tableau pour stocker les informations des étudiants à afficher dans la vue
 
-    students.forEach((student) => {
-      let classroomName = "";
-      let classroom_id;
+    students.forEach((student) => { // Parcourt chaque étudiant pour préparer les données à afficher
+      let classroomName = "";// Variable pour stocker le nom de la classe de l'étudiant
+      let classroom_id;// Variable pour stocker l'identifiant de la classe de l'étudiant
 
-      classrooms.forEach((classroom) => {
+      classrooms.forEach((classroom) => {// Parcourt chaque classe pour trouver celle associée à l'étudiant
         if (!student.classroom) {
           return (classroomName = "Pas de classe assignée");
-        }
+        }// Vérifie si l'étudiant a une classe assignée
 
         if (classroom.id == student.classroom.id) {
           classroomName = classroom.name;
           classroom_id = classroom.id;
-        }
+        }// Si la classe correspond à celle de l'étudiant, on récupère son nom et son identifiant
       });
-      return arrayStudent.push({
+
+      return arrayStudent.push({ // Ajoute les informations de l'étudiant et de sa classe dans le tableau arrayStudent pour l'affichage
         id: student.id,
         lastname: student.lastname,
         firstname: student.firstname,
@@ -122,6 +121,7 @@ export async function getManagementStudent(req, res) {
         classroomId: classroom_id,
       });
     });
+
     // Récupération des messages stockés dans la session
     const errorUpdate = req.session.errorUpdate;
     const messSucces = req.session.succes;
@@ -134,7 +134,7 @@ export async function getManagementStudent(req, res) {
       user: req.session.user,
       students: arrayStudent,
       capaciteMaxClassroom,
-      updateStudent: Number(req.params.id),
+      updateStudent: Number(req.params.id),// Récupère l'identifiant de l'étudiant à mettre à jour depuis les paramètres de l'URL
       errorUpdate,
       messSucces,
     });
@@ -171,13 +171,13 @@ export async function postUpdate(req, res) {
     return res.redirect("/student");
   }
 
-  let classroomId = classroom_id;
+  let classroomId = classroom_id; // Variable pour stocker l'identifiant de la classe de l'élève à mettre à jour
 
   if (classroomId === "") {
-    //Convertit classroom_id : si le champ est vide on met null, sinon on le transforme en nombre pour éviter les erreurs de clé étrangère.
+    // Si aucun identifiant de classe n'est fourni, on le met à null pour indiquer qu'il n'y a pas de classe assignée
     classroomId = null;
   } else {
-    classroomId = Number(classroom_id);
+    classroomId = Number(classroom_id);// Sinon, on convertit l'identifiant de la classe en nombre pour la mise à jour pour éviter les erreurs de clef étrangère
   }
   try {
     await nbStudentMaxByClassroom(req.session.user.id);
@@ -199,7 +199,7 @@ export async function postUpdate(req, res) {
   }
 }
 
-// Supprime l'affectation de classe d'un élève.
+// Supprime l'affectation de classe d'un élève.utilisé dans modalDisplayStudent.twig (classroomRouter) et dans student.twig(studentRoiuter) pour supprimer l'affectation d'une classe à un élève.
 export async function disconnectClassroom(req, res) {
   const { classrom_id } = req.body;
   const { id } = req.params;

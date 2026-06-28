@@ -14,7 +14,7 @@
 			</thead>
 
 			<tbody>
-				{% for allStudent in allStudentByClassroom.student %}
+				{% for allStudent in allStudentByClassroom.student %} {# Boucle sur chaque élève dans le tableau allStudentByClassroom.student (allStudentByClassroom = résultat de la requête dipslayStudentByClassroom) #}
 					<tr>
 						<td>{{ allStudent.lastname }}</td>
 						<td>{{ allStudent.firstname }}</td>

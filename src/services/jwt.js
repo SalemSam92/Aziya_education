@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export function generateToken(professor_id) {
   return jwt.sign(                                    // Génère un token JWT signé
-    { id: professor_id },                            // Payload : on met l'ID de l'employé dans le token
+    { id: professor_id },                            // Payload : on met l'ID du professeur dans le token
     process.env.JWT_SECRET, {                       // Clé secrète utilisée pour signer le token
     expiresIn: "24h",                              // Durée de validité du token : 24 heures
   });

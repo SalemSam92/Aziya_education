@@ -12,6 +12,7 @@ import {
   ChangePasswordById,
   createProfessor,
   deleteProfessor,
+  getSchoolBySiret,
   getUpdateProfessor,
   login,
   nbProfessor,
@@ -54,13 +55,103 @@ export async function getLandingPage(req, res) {
 }
 export async function getContact(req, res) {
   try {
+    const contactSuccess = req.session.contactSuccess;
+    const contactError = req.session.contactError;
+    req.session.contactSuccess = null;
+    req.session.contactError = null;
+
     res.render("pages/contact.twig", {
       title: "Contact",
+      contactSuccess,
+      contactError,
     });
   } catch (error) {
     console.log(error);
   }
 }
+
+// Traitement du formulaire de contact — envoi d'un e-mail vers l'adresse de destination définie
+export async function postContact(req, res) {
+  const { lastname, mail, subject, message } = req.body;
+
+  if (!lastname || !mail || !message) {
+    req.session.contactError = "Veuillez remplir tous les champs requis.";
+    return res.redirect("/contact");
+  }
+  if( !mailRegex.test(mail)) {
+    req.session.contactError = "Veuillez saisir une adresse e-mail valide.";
+    return res.redirect("/contact");
+  }
+  if (!lastnameRegex.test(lastname)) { 
+    req.session.contactError = "Veuillez saisir un nom de famille valide (lettres uniquement, espaces/tirets/apostrophes autorisés).";
+    return res.redirect("/contact");
+  }
+  if (subject && subject.length > 100) {// Vérification de la longueur du sujet si fourni, si le subject est vide, on ne fait pas de vérification
+    req.session.contactError = "Le sujet ne doit pas dépasser 100 caractères.";
+    return res.redirect("/contact");
+  }
+if (message.length > 1000) {  
+  req.session.contactError = "Le message ne doit pas dépasser 1000 caractères.";
+  return res.redirect("/contact");
+}
+
+  try {
+    // const dest = process.env.MAIL_USER;
+    await transporter.sendMail({
+      from: process.env.MAIL_USER ,
+      to: process.env.MAIL_USER,
+      subject: subject || `Nouveau message de contact de ${lastname}`,
+      html: `
+  <div style="font-family: Arial, sans-serif; background-color:#f5f5f5; padding:20px;">
+  <div style="max-width:600px; margin:auto; background:white; border-radius:8px; padding:25px; text-align:left; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+
+    <!-- Logo textuel -->
+    <div style="font-size:32px; font-weight:bold; text-align:center; margin-bottom:25px;">
+      <span style="color:#35895f;">Aziya</span><span style="color:#000000;">Education</span>
+    </div>
+
+    <!-- Titre -->
+    <h2 style="color:#2c3e50; margin-bottom:20px; text-align:center;">
+          Nouveau message de contact 
+    </h2>
+
+    <!-- Contenu -->
+    <p style="font-size:16px; color:#333; line-height:1.6;">
+      <strong>Nom :</strong> ${lastname}
+    </p>
+
+    <p style="font-size:16px; color:#333; line-height:1.6;">
+      <strong>Email :</strong> ${mail}
+    </p>
+
+    <p style="font-size:16px; color:#333; line-height:1.6; margin-top:25px;">
+      <strong>Message :</strong>
+    </p>
+
+    <div style="font-size:16px; color:#333; line-height:1.6; background:#f8f8f8; padding:15px; border-radius:6px; border:1px solid #eee;">
+      ${message.replace(/\n/g, "<br/>")}
+    </div>
+
+    <hr style="border:none; border-top:1px solid #eee; margin:30px 0;">
+
+    <p style="font-size:12px; color:#999; text-align:center;">
+      Ceci est un message automatique, merci de ne pas y répondre.
+    </p>
+
+  </div>
+</div>`
+});
+
+    req.session.contactSuccess = "Votre message a bien été envoyé.";
+    return res.redirect("/contact");
+  } catch (error) {
+    console.log("Erreur envoi mail contact:", error);
+    req.session.contactError =
+      "Une erreur est survenue lors de l'envoi du message.";
+    return res.redirect("/contact");
+  }
+}
+
 export async function getRegisterDirector(req, res) {
   try {
     res.render("pages/register.twig", {
@@ -71,9 +162,11 @@ export async function getRegisterDirector(req, res) {
   }
 }
 
+// Traitement du formulaire d'inscription du directeur
 export async function postRegisterDirector(req, res) {
-  const { schoolName, siret, lastname, firstname, mail, password } = req.body;
-
+  const { schoolName, siret, lastname, firstname, mail, password } = req.body; 
+  
+  // Validation des données du formulaire d'inscription du directeur avec les regex définies dans services/regexDirector.js
   if (!schoolNameRegex.test(schoolName) || !schoolName) {
     return res.render("pages/register.twig", {
       title: "Inscription",
@@ -116,9 +209,24 @@ export async function postRegisterDirector(req, res) {
     });
   }
   try {
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10); // Hashage du mot de passe avec bcrypt pour sécuriser le stockage dans la base de données
 
+    const user = await login(mail); // Vérification que l'utilisateur n'existe pas déjà dans la base de données via son e-mail
+    if (user) {
+      return res.render("pages/register.twig", {
+        title: "Inscription",
+        error: "Un utilisateur avec cette adresse e-mail existe déjà.",
+      });
+    }
+    const school = await getSchoolBySiret(siret); // Vérification que l'école n'existe pas déjà dans la base de données via son numéro SIRET
+    if (school) { 
+      return res.render("pages/register.twig", {
+        title: "Inscription",       
+        error: "Une école avec ce numéro SIRET existe déjà.",
+      });
+    }
     await registerDirector(
+      // Appel de la fonction registerDirector pour créer le directeur dans la base de données avec les données du formulaire
       schoolName,
       siret,
       lastname,
@@ -126,7 +234,7 @@ export async function postRegisterDirector(req, res) {
       mail,
       passwordHash,
     );
-
+  
     res.redirect("/login");
   } catch (error) {
     console.log(error.message);
@@ -136,6 +244,7 @@ export async function postRegisterDirector(req, res) {
   }
 }
 
+// Affichage de la page de connexion pour le directeur et le professeur
 export async function getLogin(req, res) {
   try {
     res.render("pages/login.twig", {
@@ -146,6 +255,7 @@ export async function getLogin(req, res) {
   }
 }
 
+// Traitement du formulaire de connexion du directeur ou du professeur
 export async function postLogin(req, res, next) {
   const { mail, password } = req.body;
 
@@ -162,7 +272,7 @@ export async function postLogin(req, res, next) {
     });
   }
   try {
-    const user = await login(mail);
+    const user = await login(mail); // Vérification que l'utilisateur existe dans la base de données via son e-mail
 
     if (!user) {
       throw new Error("Utilisateur inconnu");
@@ -174,7 +284,7 @@ export async function postLogin(req, res, next) {
       throw new Error("Mot de passe incorrect");
     }
 
-    req.session.userId = user.id;
+    req.session.userId = user.id; // Stockage de l'ID de l'utilisateur dans la session pour maintenir la connexion
     console.log(req.session.userId);
 
     next();
@@ -187,7 +297,7 @@ export async function postLogin(req, res, next) {
   }
 }
 
-//Affichage de la page newPassword soit via "mot de passe oublié" soit via le lien de l'e-mail envoyé
+// Affichage de la page "Mot de passe oublié" via le lien "Mot de passe oublié" sur la page de connexion
 export async function getNewPassword(req, res) {
   try {
     res.render("pages/newPassword.twig", {
@@ -198,20 +308,23 @@ export async function getNewPassword(req, res) {
   }
 }
 
+// Envoi du mail pour réinitialiser le mot de passe via le lien "Mot de passe oublié" sur la page de connexion
 export async function postNewPassword(req, res) {
   const { token, mail } = req.body;
 
   try {
-    const user = await login(mail);
+    const user = await login(mail); // Vérification que l'utilisateur existe dans la base de données via son e-mail
 
     if (!user) {
-      res.render("pages/newPassword", {
+      res.render("pages/newPassword.twig", {
         title: "Réinitialisation du mot de passe",
         errorUser: "Aucun compte associé à cette adresse e-mail",
       });
     }
-    const token = generateToken(user.id);
+    const token = generateToken(user.id); // Génération d'un token JWT pour l'utilisateur avec son ID en paramètre afin de sécuriser le lien de réinitialisation du mot de passe
+
     await transporter.sendMail({
+      // Envoi du mail de réinitialisation du mot de passe avec le lien contenant le token
       from: process.env.MAIL_USER,
       to: mail,
       subject: "Réinitialisation du mot de passe",
@@ -241,7 +354,7 @@ export async function postNewPassword(req, res) {
 
     <!-- Bouton vert -->
     <div style="margin:30px 0;">
-      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}"
+      <a href="http://localhost:3002/changePassword?token=${token}"
          style="background:#35895f; color:white; padding:12px 22px; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold; display:inline-block;">
         Réinitialiser mon mot de passe
       </a>
@@ -249,16 +362,16 @@ export async function postNewPassword(req, res) {
 
     <!-- Lien alternatif -->
     <p style="font-size:14px; color:#555; line-height:1.6;">
-      Si le bouton ne fonctionne pas, vous pouvez copier/coller ce lien dans votre navigateur :
+      Si le bouton ne fonctionne pas :
     </p>
 
     <div style="margin:20px 0;">
-      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}" 
+      <a href="http://localhost:3002/changePassword?token=${token}" 
          style="color:#35895f; font-weight:bold; text-decoration:none;">
         Cliquer ici
       </a>
     </div>
-
+    
     <hr style="border:none; border-top:1px solid #eee; margin:30px 0;">
 
     <p style="font-size:12px; color:#999;">
@@ -274,25 +387,25 @@ export async function postNewPassword(req, res) {
   }
 }
 
-//Affichage de la page ChangePassword soit via "mot de passe oublié" soit via le lien de l'e-mail envoyé
+// Affichage de la page "Nouveau mot de passe" via le lien envoyé par mail  pour réinitialiser le mot de passe
 export async function getChangePassword(req, res) {
-  const {token} = req.query
+  const { token } = req.query; // Récupération du token depuis la query string de l'URL (ex: /changePassword?token=abc123)
   try {
     res.render("pages/changePassword.twig", {
       title: "Nouveau mot de passe",
-      token // <-- ON PASSE LE TOKEN AU TEMPLATE
+      token, // <-- ON PASSE LE TOKEN AU TEMPLATE
     });
   } catch (error) {
     console.log(error);
   }
 }
 
-//Création de nouveau mot de passe via le token et "mot de passe oublié"
+// Traitement du formulaire pour réinitialiser le mot de passe via le lien envoyé par mail
 export async function postChangePassword(req, res) {
   const { password } = req.body;
   const { token } = req.body;
 
-  // Si pas de token → flux "mot de passe oublié" → on doit valider le mail
+  // Si le token est absent, on affiche un message d'erreur et on ne procède pas à la mise à jour du mot de passe
   if (!token) {
     return res.render("pages/changePassword.twig", {
       title: "Mot de passe oublié",
@@ -310,11 +423,13 @@ export async function postChangePassword(req, res) {
 
   try {
     // --- FLUX AVEC TOKEN ---
-    // Cas du lien envoyé par le directeur → on identifie via l'ID contenu dans le token pour plus de sécurité
+    // Vérification du token et récupération de l'ID du professeur depuis le payload du token
 
-    const payload = verifieToken(token); // Vérifie et décode le token
+    const payload = verifieToken(token); // Vérifie et décode le token (token est un objet contenant l'ID du professeur dans payload.id)
 
-    const professorId = await getUpdateProfessor(payload.id); // Vérifie que le professeur existe
+    const professorId = await getUpdateProfessor(payload.id); // Vérifie que le professeur existe dans la base de données via l'ID contenu dans le token
+
+    // Si le professeur n'existe pas, on affiche un message d'erreur et on ne procède pas à la mise à jour du mot de passe
     if (!professorId) {
       return res.render("pages/changePassword.twig", {
         title: "Nouveau mot de passe",
@@ -332,7 +447,7 @@ export async function postChangePassword(req, res) {
   } catch (error) {
     console.log(error);
     res.render("pages/changePassword.twig", {
-      title: token ? "Nouveau mot de passe" : "Mot de passe oublié",
+      // title: token ? "Nouveau mot de passe" : "Mot de passe oublié",
       errorNewPassword: "Identifiants invalide",
     });
   }
@@ -377,7 +492,7 @@ export async function postCreateProfessor(req, res) {
         hashPassword,
         Number(school_id),
       );
-      const token = generateToken(newUser.id);
+      const token = generateToken(newUser.id); // Génération d'un token JWT pour le nouveau professeur afin de sécuriser le lien de création du mot de passe
 
       await transporter.sendMail({
         from: process.env.MAIL_USER,
@@ -409,7 +524,7 @@ export async function postCreateProfessor(req, res) {
 
     <!-- Bouton vert -->
     <div style="margin:30px 0;">
-      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}"
+      <a href="http://localhost:3002/changePassword?token=${token}"
          style="background:#35895f; color:white; padding:12px 22px; text-decoration:none; border-radius:6px; font-size:16px; font-weight:bold; display:inline-block;">
         Définir mon mot de passe
       </a>
@@ -417,11 +532,11 @@ export async function postCreateProfessor(req, res) {
 
     <!-- Lien alternatif -->
     <p style="font-size:14px; color:#555; line-height:1.6;">
-      Si le bouton ne fonctionne pas, vous pouvez copier/coller ce lien dans votre navigateur :
+      Si le bouton ne fonctionne pas, :
     </p>
 
     <div style="margin:20px 0;">
-      <a href="https://sam-salem.ri7.tech/changePassword?token=${token}" 
+      <a href="http://localhost:3002/changePassword?token=${token}" 
          style="color:#35895f; font-weight:bold; text-decoration:none;">
         Cliquer ici
       </a>
@@ -452,19 +567,22 @@ export async function postCreateProfessor(req, res) {
 
 export async function getDashboardDirector(req, res) {
   try {
-    const totalProfessor = await nbProfessor(req.session.user.school_id);
-    const totalStudent = await nbStudent(req.session.user.school_id);
-    const totalClassroom = await nbClassroom(req.session.user.school_id);
+    const totalProfessor = await nbProfessor(req.session.user.school_id); // Récupération du nombre total de professeurs pour l'école du directeur connecté
+    const totalStudent = await nbStudent(req.session.user.school_id); // Récupération du nombre total d'élèves pour l'école du directeur connecté
+    const totalClassroom = await nbClassroom(req.session.user.school_id); // Récupération du nombre total de classes pour l'école du directeur connecté
 
-    const professors = await selectProfessor(req.session.user.school_id);
-    const classrooms = await selectClassroom(req.session.user.school_id);
+    const professors = await selectProfessor(req.session.user.school_id); // Récupération de la liste des professeurs pour l'école du directeur connecté
+    const classrooms = await selectClassroom(req.session.user.school_id); // Récupération de la liste des classes pour l'école du directeur connecté
     const studentsWithClassroom = await studentAddClassroom(
+      // Récupération de la liste des élèves avec leur classe pour l'école du directeur connecté
       req.session.user.school_id,
     );
     const capaciteMaxClassroom = await nbStudentMaxByClassroom(
+      // Récupération de la capacité maximale des classes pour l'école du directeur connecté
       req.session.user.school_id,
     );
     const professorWithClassroom = await classroomWithProfessor(
+      // Récupération de la liste des professeurs avec leur classe (dans classroomRepository) pour l'école du directeur connecté
       req.session.user.school_id,
     );
 
@@ -498,6 +616,8 @@ export async function getDashboardDirector(req, res) {
   }
 }
 
+// PARTIE GESTION DES PROFESSEURS
+
 //AFFICHE LA PAGE EN MODE LSTE
 export async function getManagementProfessor(req, res) {
   // Récupération des messages stockés dans la session
@@ -507,7 +627,7 @@ export async function getManagementProfessor(req, res) {
   req.session.errorUpdate = null;
   req.session.succes = null;
   try {
-    const professors = await selectProfessor(req.session.user.school_id);
+    const professors = await selectProfessor(req.session.user.school_id); // Récupération de la liste des professeurs pour l'école du directeur connecté
     res.render("pages/professor.twig", {
       title: "Gestion professeurs",
       user: req.session.user,
@@ -522,17 +642,17 @@ export async function getManagementProfessor(req, res) {
 
 // AFFICHE LA PAGE EN MODE EDITION
 export async function getUpdate(req, res) {
-  const { professor_id } = req.params;
+  const { professor_id } = req.params; // Récupération de l'ID du professeur à modifier depuis les paramètres de l'URL (ex: /professor/update/123)
   try {
-    const professors = await selectProfessor(req.session.user.school_id);
-    const updateProf = await getUpdateProfessor(Number(professor_id));
+    const professors = await selectProfessor(req.session.user.school_id); // Récupération de la liste des professeurs pour l'école du directeur connecté
+    const updateProf = await getUpdateProfessor(Number(professor_id)); // Récupération des informations du professeur à modifier pour l'école du directeur connecté
     console.log(updateProf.id);
 
     res.render("pages/professor.twig", {
       title: "Gestion professeurs",
       user: req.session.user,
       professors,
-      updateProf: updateProf.id,
+      updateProf: updateProf.id, // On passe l'ID du professeur à modifier pour l'affichage du formulaire d'édition
     });
   } catch (error) {
     console.log(error);
@@ -541,7 +661,7 @@ export async function getUpdate(req, res) {
 
 export async function postUpdate(req, res) {
   const { lastname, firstname, mail } = req.body;
-  const { professor_id } = req.params;
+  const { professor_id } = req.params; // Récupération de l'ID du professeur à modifier depuis les paramètres de l'URL (ex: /professor/update/123)
 
   if (!lastnameRegex.test(lastname) || !lastname) {
     req.session.errorUpdate =
@@ -558,7 +678,7 @@ export async function postUpdate(req, res) {
     return res.redirect("/professor");
   }
   try {
-    await postUpdateProfessor(Number(professor_id), lastname, firstname, mail);
+    await postUpdateProfessor(Number(professor_id), lastname, firstname, mail); // Mise à jour des informations du professeur dans la base de données via l'ID du professeur et les nouvelles valeurs
     req.session.succes = "Modification enregistrée.";
     res.redirect("/professor");
   } catch (error) {
@@ -570,6 +690,7 @@ export async function postUpdate(req, res) {
   }
 }
 
+// SUPPRESSION D'UN PROFESSEUR
 export async function deleteProf(req, res) {
   const { professor_id } = req.params;
   try {
@@ -581,9 +702,10 @@ export async function deleteProf(req, res) {
   }
 }
 
+// SUPPRESSION D'UNE AFFECTATION PROFESSEUR-CLASSE
 export async function deleteAffectProf(req, res) {
   const { classroom, professor } = req.body;
-  const { professor_id } = req.params;
+  const { professor_id } = req.params; // Récupération de l'ID du professeur à supprimer depuis les paramètres de l'URL (ex: /professor/deleteAffectation/123)
   console.log(req.body);
 
   try {
@@ -599,20 +721,24 @@ export async function deleteAffectProf(req, res) {
   }
 }
 
+// PARTIE GESTION DU DASHBOARD DU PROFESSEUR
+
 export async function getDashboarProfessor(req, res) {
   try {
-    const student = await selectStudent(req.session.user.school_id);
+    const student = await selectStudent(req.session.user.school_id); // Récupération de la liste des élèves pour l'école du professeur connecté
     let id;
     student.forEach((eleve) => {
       id = eleve.id;
-    });
+    }); // est envoyé à la fonction selectStudentById(studentId) pour récupérer un élève par son ID pour le formulaire de sélection d'élève dans le dashboard du professeur
     const professorWithClassroom = await classroomWithProfessor(
       req.session.user.school_id,
-    );
+    ); // Récupération de la liste des classes pour l'école du professeur connecté
+
     const listStudentByProfessor = await studentsByProfessor(
       req.session.userId,
-    );
-    const studentId = await selectStudentById(Number(id));
+    ); // Récupération de la liste des élèves par classe pour le professeur connecté
+
+    const studentId = await selectStudentById(Number(id)); // Récupération des informations de l'élève sélectionné pour le calendrier
 
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
@@ -642,13 +768,15 @@ export async function postListStudentByProfessor(req, res) {
     const professorWithClassroom = await classroomWithProfessor(
       req.session.user.school_id,
     );
-    const students = await selectStudentByClassroom(Number(classroom_id));
+    const students = await selectStudentByClassroom(Number(classroom_id)); // Récupération de la liste des élèves pour la classe sélectionnée par le professeur connecté pour la modalListStudent.twig
+
     const nbStudentByClassroom = await nbStudentClassroom(
       req.session.user.school_id,
-    );
+    ); // Récupération du nombre d'élèves par classe pour le professeur connecté
+
     const listStudentByProfessor = await studentsByProfessor(
       req.session.userId,
-    );
+    ); // Récupération de la liste des élèves pour le professeur connecté
 
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
@@ -660,13 +788,14 @@ export async function postListStudentByProfessor(req, res) {
       errorSelect,
       modal: true,
       modalCalendar: false,
-      selectedClassroom: classroom_id,
+      selectedClassroom: classroom_id, // On passe l'ID de la classe sélectionnée récuperer avec le req.body pour l'affichage de la modalListStudent.twig
     });
   } catch (error) {
     console.log(error);
   }
 }
 
+//Afficher modal avec calendrier des imputations par élève dans le dashboardProfessor
 export async function postCalendar(req, res) {
   const { student_id } = req.body;
   const { student } = req.params;
@@ -678,13 +807,16 @@ export async function postCalendar(req, res) {
   req.session.errorSelect = null;
   try {
     const professorWithClassroom = await classroomWithProfessor(
+      // Récupération des classes du professeur connecté
       req.session.user.school_id,
     );
-    // const students = await selectStudentByClassroom(Number(classroom_id));
+    //  const students = await selectStudentByClassroom(Number(classroom_id));//
+
     const nbStudentByClassroom = await nbStudentClassroom(
+      // Récupération du nombre d'élèves par classe pour le professeur connecté
       req.session.user.school_id,
     );
-    const studentId = await selectStudentById(Number(student_id));
+    const studentId = await selectStudentById(Number(student_id)); // Récupération des informations de l'élève sélectionné pour le calendrier
 
     res.render("pages/dashboardProfessor.twig", {
       title: "Tableau de bord",
@@ -701,12 +833,15 @@ export async function postCalendar(req, res) {
   }
 }
 
+// Récupération des événements pour le calendrier
 export async function getCalendar(req, res) {
   const { student_id } = req.params;
   try {
     const imputations = await listImputationsByStudent(Number(student_id));
     const events = imputations.map((imputation) => ({
-      // .map() transforme tes imputations en événements FullCalendar.
+      // .map() permet de transformer chaque élément du tableau imputations en un nouvel objet avec les propriétés nécessaires pour FullCalendar
+      // On crée un objet pour chaque imputation avec les propriétés nécessaires pour FullCalendar
+
       title: imputation.isPresent ? "Présent" : "Absent", // Si l'élève est présent, affiche "Présent", sinon affiche "Absent".
       color: imputation.isPresent ? "green" : "red", // Met l'événement en vert si présent, en rouge si absent.
       start: imputation.dateTime.toISOString().split("T")[0], // toISOString().split("T")[0] sert à convertir la date en YYYY-MM-DD pour FullCalendar

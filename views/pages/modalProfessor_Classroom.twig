@@ -19,16 +19,16 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for classroom in professorWithClassroom %}
+					{% for classroom in professorWithClassroom %}{# On parcourt la liste des professeurs avec leur classe d'affectation #}
 						{% if classroom.professor_id %}
 							<tr>
-								<td>{{classroom.user.lastname}}</td>
+								<td>{{classroom.user.lastname}}</td>{#Affiche le nom du professeur associé à la classe #}
 								<td>{{classroom.user.firstname}}</td>
 								<td>{{classroom.name}}</td>
 								<td>
 									<form action="/dashboardDirector/{{classroom.user.id}}/deleteAffectation" method="post">
-										<input type="hidden" name="classroom" value="{{classroom.id}}">
-										<input type="hidden" name="professor" value="{{classroom.user.id}}">
+										<input type="hidden" name="classroom" value="{{classroom.id}}">{# On envoie l'ID de la classe pour laquelle on veut retirer l'affectation du professeur #}
+										<input type="hidden" name="professor" value="{{classroom.user.id}}">{# On envoie l'ID du professeur pour lequel on veut retirer l'affectation de la classe #}
 										<button type="submit" class="btn-delete">Retirer affectation</button>
 									</form>
 								</td>

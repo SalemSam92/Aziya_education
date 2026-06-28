@@ -248,7 +248,7 @@ label {
 }
 
 /* ===========================
-   📱 Responsive TABLETTE
+     Responsive TABLETTE
    =========================== */
 @media (max-width: 992px) {
   .container {
@@ -299,7 +299,7 @@ label {
 }
 
 /* ===========================
-   📱 Responsive MOBILE
+    Responsive MOBILE
    =========================== */
 @media (max-width: 735px) {
   .container {
@@ -366,4 +366,23 @@ label {
   }
  
 }
+@media (max-width: 400px) {
+  .container {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 10px;
+  }
+   .affect-section {
+    width: 75%;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-choice-classroom,
+  .btn-choice-student {
+    width: 100%;
+  }
 
+}

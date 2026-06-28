@@ -93,8 +93,9 @@
 				</div>
 			</div>
 			<div class="modal-confirm">
-				{% if confirmAffectation %}  {# Pour déclencher la modal quand le controller envoi 
-				confirmAffectation : true si le prof possède déjà une classe ou plus et que le confirm n'existe pas #}
+				{% if confirmAffectation %}
+					{# Dans claasroomController -  
+					Pour déclencher la modal quand le controller envoi confirmAffectation : true si le prof possède déjà une classe ou plus et que le confirm n'existe pas #}
 					<div class="modal-container">
 						{% include "../pages/modalConfirmAffectProf.twig" %}
 					</div>
@@ -148,7 +149,9 @@
 								<option value="">------Selectionner un élève------</option>
 								{% for studentWithClassroom in studentsWithClassroom %}
 									{% if not studentWithClassroom.classroom %}
-										<option value="{{studentWithClassroom.id}}">{{studentWithClassroom.lastname}}
+										{# Si l'élève n'a pas de classe, on l'affiche dans la liste déroulante #}
+										<option value="{{studentWithClassroom.id}}">
+											{{studentWithClassroom.lastname}}
 											{{studentWithClassroom.firstname}}
 										</option>
 									{% endif %}
@@ -162,7 +165,9 @@
 							<select name="classroom_id" id="classroom_student">
 								<option value="">------Selectionner une classe------</option>
 								{% for classroom in capaciteMaxClassroom %}
+									{# Pour chaque classe, on vérifie si elle a de la place pour un nouvel élève #}
 									{% if classroom.nbMaxStudent > classroom.student.length %}
+										{# Si la capacité maximale de la classe est supérieure au nombre d'élèves actuels, on l'affiche dans la liste déroulante #}
 										<option value="{{classroom.id}}">
 											{{classroom.name}}
 										</option>

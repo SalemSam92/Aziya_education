@@ -53,7 +53,7 @@ export async function affectClassroom(id, classroom_id) {
   });
 }
 
-// Récupère les élèves d'une école avec leur classe complète.
+// Récupère les élèves d'une école avec leur classe complète.utilisée pour l'affichage dans la vue de gestion des élèves dans userContoller. 
 export async function studentAddClassroom(school_id) {
   return await prisma.student.findMany({
     where: { school_id: school_id },
@@ -66,24 +66,24 @@ export async function studentAddClassroom(school_id) {
   });
 }
 
-// Récupère la classe d'un élève par son id.
-export async function nbClassroomForStudent(id) {
-  return await prisma.student.findUnique({
-    select: {
-      classroom_id: true,
-    },
-    where: {
-      id: id,
-    },
-  });
-}
+// // Récupère la classe d'un élève par son id.utilsée pour l'affichage dans la vue de gestion des élèves. 
+// export async function nbClassroomForStudent(id) {
+//   return await prisma.student.findUnique({
+//     select: {
+//       classroom_id: true,
+//     },
+//     where: {
+//       id: id,
+//     },
+//   });
+// }
 
-// Compte les élèves par classe pour une école.
+// Récupère le nombre d'élèves par classe pour une école donnée.utilisé dans le userController pour l'affichage dans la vue de gestion des élèves
 export async function nbStudentClassroom(school_id) {
-  return await prisma.student.groupBy({
-    by: ["classroom_id"],
-    where: { school_id },
-    _count: { id: true },
+  return await prisma.student.groupBy({ 
+    by: ["classroom_id"],// Groupement par l'identifiant de la classe
+    where: { school_id },// Filtrage par l'identifiant de l'école
+    _count: { id: true },// Comptage du nombre d'élèves par classe gârce à l'ID de l'élève
   });
 }
 
@@ -123,7 +123,7 @@ export async function deleteStudent(id) {
   });
 }
 
-// Récupère les élèves d'une classe avec leurs imputations du jour.(dans la modal du dashboardProfessor)
+// Récupère les élèves d'une classe avec leurs imputations du jour.(dans la modalListStudent.twig)
 export async function selectStudentByClassroom(classroom_id) {
   const today = new Date();
 
@@ -145,9 +145,9 @@ export async function selectStudentByClassroom(classroom_id) {
       // Récupération UNIQUEMENT l’imputation du jour
       imputations: {
         where: {
-          dateTime: {
-            gte: startOfDay,
-            lte: endOfDay,
+          dateTime: { // Filtrer les imputations par date
+            gte: startOfDay, // Filtrer les imputations dont la date est supérieure ou égale au début de la journée
+            lte: endOfDay, // Filtrer les imputations dont la date est inférieure ou égale à la fin de la journée
           },
         },
       },
